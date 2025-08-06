@@ -1,0 +1,113 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <style>
+    .box_1 .in{ margin-right:10px;}
+    .win p{ margin-bottom:10px;}
+    .bt3{ margin-right:10px;}
+    .fn_1{ width:110px;}
+    textarea.in{ height: 100px;}
+    .pointer{ cursor: pointer;}
+ </style>
+ <div class="box mdgl" id="app">
+    <div class="fn"><i class="bt2" @click="win.data={},win.is=1">新增收集</i>
+        <input v-model='sch' class="in" type="text"  placeholder="输入..." @keyup.enter='get()'>
+        <i class="bt1 sch" @click='get()'>搜索</i> 
+    </div>
+    <div class="table">
+        <table>
+            <thead><td>标题</td><td width='30%'>收集人</td><td>预计数量</td><td>实际数量</td><td>发布日期</td><td>操作</td></thead>
+            <tbody>
+                <tr v-for="us of data"  >
+                    <td class="name pointer" @click="ctl.golink('zlsj_det?id='+us.id)"><i v-text="us.title"></i></td>
+                    <td class="name"><i v-text="us.name_1"></i></td>
+                    <td class="name"><i v-text="us.yj_num"></i></td>
+                    <td class="name"><i v-text="us.sj_num"></i></td>
+                    <td class="name" ><i v-text="new Date(us.create_at).toLocaleDateString()"></i></td>
+                    <td class="name" ><i class="bt0" @click="del(us.id)">删除</i> <i class="bt3" @click="out(us.id)">导出</i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="win" v-if="win.is">
+        <div class="box_1"><i class="close" @click="win.is=0">Ⅹ</i>
+        <div class='box_2'>
+            <p><b>收集人：</b><input type="text" v-model="add_d.name_1" class="in"></p>
+            <p><b>标题：</b><input type="text" v-model="add_d.title" class="in"></p>
+            <p><b>预计数量：</b><input type="text" v-model="add_d.yj_num" class="in"></p>
+            <p><b>所需内容：</b><textarea v-model="add_d.tb_head" class="in"></textarea></p>
+            <p><i class="bt1" @click="add()">确定</i></p>
+        </div>
+        </div>
+    </div>
+
+</div>
+ <script type="text/javascript">
+
+$(document).ready(e=>{
+    $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+    
+})
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{}},
+        sch:'',
+        add_d:[],
+        data:[],
+       
+        
+    },
+    created(){
+        this.get();
+    },
+    methods:{
+        get(e){
+            let _this=this;
+            $.ajax({url:'/zlsj',data:{get:1,sch:this.sch},success:function(res){
+                _this.data=res;
+            }});
+        },
+        add(e){
+            let _this=this;
+            let dd={get:2,...this.add_d}
+            if(confirm('请仔细审核数据，再点确定')){
+                $.ajax({url:'/zlsj',data:dd,success:function(res){
+                _this.win.is=0;_this.get();ctl.tips_show('添加成功！');
+                }})
+            }else{ctl.tips_show('您点了取消！');}
+            
+        },
+        del(id){
+            let _this=this;
+            let dd={get:3,id:id}
+            $.ajax({url:'/zlsj',data:dd,success:function(res){
+                if(res.code==1){_this.get();ctl.tips_show('删除成功！');}
+                else{ctl.tips_show(res.msg);}
+                
+            }})
+        },
+        out(id){//导出数据
+            let _this=this;
+            let dd={get:4,id:id}
+            $.ajax({url:'/zlsj',data:dd,success:function(res){
+                    if(res.code==1){
+                        let key,dt,out=[];
+                        key = res.data[1][0].tb_head.split(/\r\n|\r|\n|、/);
+                        dt = res.data[0].map(obj => {
+                        const newObj = {};
+                        for (let i = 0; i < key.length; i++) {
+                            const key_old = `name_${i}`;
+                            newObj[key[i]] = obj[key_old];
+                        }
+                        return newObj;
+                        });
+                        out.push(dt)
+                        ctl.ex_out(out,0,'门店资料');
+                    }
+                    else{ctl.tips_show(res.msg);}
+            }})
+        },
+    }
+})
+</script>
+{{/block}}

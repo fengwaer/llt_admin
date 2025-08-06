@@ -1,0 +1,178 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ 
+ <style>
+    .bg1{ background:#398;}
+    .img_ul{ width:600px; overflow:auto; white-space: nowrap;}
+    .img_ul .li{ display:inline-block; position:relative;}
+    .img_ul .li .del{ position:absolute; right:0px; top:0px;}
+    .img_ul .li p{ text-align:center;}
+    .img_ul .li img{max-width:200px; max-height:200px;}
+    .tl,.tr{ display:inline-block; width:50%; cursor:pointer; text-align:center; line-height:30px;}
+ </style>
+ <script type="text/javascript" src="/public/js/pic.js"></script>
+ <div class="box pic">
+    <div id="app">
+        <div class='tab_1'>
+            <div class='li' :class="{is:box.idx==i}" v-for='(n,i) of box.arr' @click='box.idx=i' v-text='n'></div>
+        </div>
+        <div class='tab_box' v-show="box.idx==0">
+            <div class='size'>
+            <input class='in' v-model='out_width' type='number' />
+            <input class='in' v-model='out_height' type='number' />
+            </div>
+            <div class='up_box'>
+                <p>上传需要修改的图片</p>
+                <img :src="url_img">
+                <input type="file" @change='fn_img' accept="image/*" />
+            </div>
+             <canvas id="canvas" style="display: none;"></canvas>
+             <img class='output' :src="img_src" @click="down">
+        </div>
+        <!--编辑PDF-->
+        <div class='tab_box' v-show="box.idx==1">
+            <div class='up_box'>
+                <p>上传PDF</p>
+                <input type="file" @change='fn_pdf' accept="application/pdf" />
+            </div>
+        </div>
+        <div class='tab_box' v-show="box.idx==2">
+            <div class='img_ul'>
+                <div class='li' v-for='(src,i) of img_list'>
+                    <img :src='src' /><i class='bt0 del' @click="del_img(src,i)">删除</i>
+                    <p><i class='tl' @click='img_list.move(i,i-1)'>←</i><i class='tr' @click='img_list.move(i,i+1)'>→</i></p>
+                </div>
+            </div>
+            <div class='up_box'>
+            <p>上传图片</p>
+            <input type="file" @change='up_img' accept="image/*" multiple />
+            </div>
+            <div class='up_box bg1' @click='to_pdf'>
+            <p>开始转换</p>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+ <script type="text/javascript">
+$(document).ready(e=>{
+    $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+    
+})
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{}},
+        url_img:'',
+        img_src:'',
+        out_width:200,
+        out_height:150,
+        box:{idx:0,arr:['调整图片尺寸','PDF转图片','图片转PDF']},
+        img_list:'',
+        
+        
+    },
+    created(){
+        function codes(input) {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = input;
+            return textarea.value;
+        }
+        let a=codes('{{img_list}}');
+        a = a.replace(/\\/g, '\\\\');
+        this.img_list=JSON.parse(a);
+        
+        //移动位置
+         Array.prototype.move = function (fromIndex, toIndex) {
+            this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
+        };
+    },
+    methods:{
+        //上传图片
+        up_img:function(e){
+            const file=e.target.files
+            let formData = new FormData();
+            for (let i = 0; i < file.length; i++) {formData.append("files", file[i]);}
+             $.ajax({url:'/upload',type:'post' ,data:formData,contentType:false,processData:false,success:function(re){
+                ctl.tips_show(re.msg+'上传成功!');
+                location.reload();
+            }})
+        },
+        //删除已上传的图片
+        del_img(file,idx){
+            let _this=this;
+            $.ajax({url:'/pic',data:{get:1,file:file},success:function(re){
+                ctl.tips_show(re.msg+'删除成功...');
+                _this.img_list.splice(idx,1);
+            }})
+        },
+        //图片转pdf
+        to_pdf:function(e){
+            let _this = this;
+            $.ajax({url:'/pic_pdf',type:'post' ,data:{img_path:this.img_list},success:function(re){
+                if(re.file){
+                    ctl.tips_show(re.msg+'准备下载...');
+                    _this.down('img_pdf.pdf',re.file)
+                    location.reload();
+                }else{ctl.tips_show(re.msg);}
+            }})
+        },
+        //pdf转图片
+        fn_pdf:function(e){
+            let _this = this;
+            const file=e.target.files[0]
+            let formData = new FormData();
+            formData.append('file', file);
+            $.ajax({url:'/pic',type:'post',data:formData,contentType: false,processData: false,success:function(re){
+                ctl.tips_show(re.msg+'准备下载...');
+                _this.down('pdf_img.zip',re.file)
+                e.target.value='';
+            }})
+        },
+        //图片处理
+        fn_img:function(e){
+            const _this=this;
+            const file=e.target.files[0]
+            this.url_img=URL.createObjectURL(file);
+
+           const img = new Image();
+            img.onload = (re) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                let wd=_this.out_width||img.width*(_this.out_height/img.height);
+                let hg=_this.out_height||img.height*(_this.out_width/img.width);
+                console.log(_this.out_width)
+                canvas.width =wd;
+                canvas.height = hg;
+                ctx.drawImage(img, 0,0,wd,hg);
+
+                pica().resize(canvas, canvas, { quality: 0.7 })
+                pica().toBlob(canvas, 'image/jpeg', 0.7)
+                .then(blob => {
+                    _this.img_src=URL.createObjectURL(blob);
+                    // 这里可以进一步处理 Blob，例如上传或显示
+                });
+            };
+            img.src = URL.createObjectURL(file);
+           
+        },
+        //下载
+        down:function(name,href){
+           // 创建一个临时的 <a> 元素
+            const downloadLink = document.createElement('a');
+            // 设置下载链接的 href 属性为图片的 URL
+            downloadLink.href = href||this.img_src;
+            // 设置下载属性，指定下载文件的默认文件名
+            downloadLink.download =name||'img.jpg';
+            // 将 <a> 元素临时添加到文档中
+            document.body.appendChild(downloadLink);
+            // 模拟点击 <a> 元素，触发下载
+            downloadLink.click();
+            // 从文档中移除临时的 <a> 元素
+            document.body.removeChild(downloadLink);
+        },
+    }
+})
+</script>
+{{/block}}

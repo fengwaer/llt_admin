@@ -1,0 +1,53 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.core.min.js"></script>
+    
+    <div><span class="outExcel">导出</span><a class="excelDown hide" download="本子.xlsx"></a></div>
+   
+     <div class="box cate" id="app">
+          
+    </div>
+     
+    
+    
+    <script type="text/javascript">
+        var json_book=[];
+        $(document).ready(e=>{
+           
+            //触发导出Excel
+            $('.outExcel').click(function(e){
+                let url = URL.createObjectURL(outExcel());
+                $('.excelDown').attr('href',url);
+                $('.excelDown')[0].click();
+            })
+            
+        })
+        
+        
+        //导出
+        function outExcel() {
+            let sheet1='本子';
+            let aoa=[
+			['主要信息', null, null, '其它信息'], // 特别注意合并的地方后面预留2个null
+			['姓名', '性别', '年龄', '注册时间'],
+			['张三', '男', 18, new Date()],
+			['李四', '女', 22, new Date()]
+		    ];
+            let books=[aoa]
+            
+            var book = {SheetNames: [sheet1],Sheets: {}};//创建excel的json格式
+            book.Sheets[sheet1] =XLSX.utils.json_to_sheet(books);//转换
+            let opt = {bookType: 'xlsx',bookSST: false, type: 'binary'};// 生成excel的配置项
+            let write = XLSX.write(book, opt);
+            var blod=new Blob([s2ab(write)],{type:"application/octet-stream"})
+            // 字符串转ArrayBuffer
+            function s2ab(s) {
+                var buf = new ArrayBuffer(s.length);
+                var view = new Uint8Array(buf);
+                for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+                return buf;
+            }
+            return blod;
+        }
+    </script>
+{{/block}}

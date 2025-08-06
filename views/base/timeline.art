@@ -1,0 +1,148 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <style>
+    .box_1 .in{ margin-right:10px;}
+    .win p{ margin-bottom:10px;}
+    .bt3{ margin-right:10px;}
+    .fn_1{ width:110px;}
+    .box_2 { text-align: left;}
+    .c3{ text-align:center; font-size: 12px;}
+    /* .name i{color: #fff;} */
+    #calendar{ display: none; position:fixed; top:0; left:0; width:100%; height:100%; background: #fff; z-index:22;}
+ </style>
+ <script src="/public/js/datetime.js"></script>
+ <div id="calendar"></div>
+ <div class="box mdgl" id="app">
+    <div class="fn"><i class="bt2" @click="win.data={case_id:'',event:'',date:'',notes:''},win.is=1">添加</i>
+        <input v-model='sch.sch' class="in" type="text"  placeholder="输入..." @keyup.enter='sch.page=0;sch.more=1;get()'>
+        <i class="bt1 sch" @click='sch.page=0;sch.more=1;get()'>搜索</i> 
+        <i class="bt3" @click='ex_out()'>导出</i>
+        <b v-text='data.length'></b>
+        <i class="case_name" v-text='cases.names'></i>
+    </div>
+    <div class="table">
+        <table>
+            <thead><td width='30%'>时间</td><td>事件</td><td>备注</td></thead>
+            <tbody>
+                <tr v-for="(dt,idx) of data" @click="open_win(dt)">
+                    <td class="name"><i v-text="dt.date"  ></td>
+                    <td class="name"><i v-text="dt.event" ></td>
+                    <td class="name"><i v-text="dt.notes" ></td>
+                </tr>
+                <tr><td colspan="3" class="nomore">没有更多事件啦~</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+<div class="win" v-if="win.is">
+    <div class="box_1"><i class="close" @click="win.is=false">Ⅹ</i><i class='del' @click='del(win.data.Id)'>删除</i>
+    <div class='box_2'>
+        <p><b>日期：</b><input type="text" class="in" v-model="win.data.date" readonly @click="date_fn(1)"></p>
+        <p><b>事件：</b><textarea class="in" v-model="win.data.event"></textarea></p>
+        <p><b>备注：</b><input type="text" class="in" v-model="win.data.notes"></p>
+        
+    </div>
+    <p v-if=' win.data.Id'>
+        <i class="bt1" @click="update()">确定修改</i>
+    </p>
+    <p v-else><i class="bt1" @click="add()">确定添加</i></p>
+    </div>
+</div>
+
+</div>
+<script type="text/javascript">
+    new Schedule({
+    el: '#calendar', // 渲染目标容器
+    clickCb: function(dateStr) {
+        app.date_fn(0)
+        app.win.data.date=dateStr
+    }
+  });
+        $(document).ready(e=>{
+            $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+            $('.table').on('scroll',function(){
+                if ($(this).find('table').height()-$(this).scrollTop()<820){
+                    app.get();
+                }
+            });
+        })
+var app = new Vue({
+    el: '#app',
+    data: {
+        cases:{},
+        win:{is:0,data:{date:''}},
+        sch:{num:50,page:0,sch:'',case_id:'',stage:'',more:1},
+        data:[],
+        date_ps:1,
+    },
+    created(){
+        window.addEventListener('keyup', this.keyup);
+        this.get();
+        
+    },
+    methods:{
+          get:function(id){//获取案件阶段
+            let _this=this;
+            this.sch.case_id=location.href.split('?id=')[1]
+            $.ajax({url:'/timeline',data:{get:1,...this.sch},success:function(res){
+                _this.cases=res.data[0][0]
+                _this.data=res.data[1];
+            }})
+        },
+       update:function(){//修改
+           let _this=this;
+            $.ajax({url:'/timeline',data:{get:2,...this.win.data},success:function(res){
+                _this.win.is=0;
+                if(res.code==0){ctl.tips_show('修改失败！')}
+                else{ctl.tips_show('修改成功！');
+                    _this.get();
+                }
+            }})
+        },
+        open_win:function(us){//打开窗口
+            this.win.data=us;this.win.is=1;
+        },
+        add:function(){
+            let _this=this;
+            this.win.data.case_id=this.sch.case_id;
+            $.ajax({url:'/timeline',data:{get:3,...this.win.data},success:function(res){
+                _this.win.is=0;
+                if(res.code==0){ctl.tips_show('添加失败！')}
+                else{ctl.tips_show('添加成功！');
+                    setTimeout((e)=>{_this.get();},500)
+                }
+                
+            }})
+        },
+        del:function(id){//删除
+            let _this=this;
+            this.win.is=0;
+            if(confirm('警告！确定要删除该事件吗？')){
+                $.ajax({url:'/timeline',data:{get:0,id:id},success:function(res){
+                    if(res.code==0){ctl.tips_show('删除失败！')}
+                    else{ctl.tips_show('删除成功！');
+                        setTimeout((e)=>{_this.get();},500)
+                    }
+                }})
+            }
+        },
+         date_fn(is){//日历
+            if(this.win.data.case_id)return;
+            if(is){$('#calendar').show();}
+            else{$('#calendar').hide();}
+        },
+        ex_out(){//导出时间线
+            let dt=[['日期', '事件','备注']]
+            this.data.forEach((e,i)=>{
+                dt.push([e.date, e.event, e.notes])
+            })
+            ctl.ex_out([dt],1,'【事件经过】'+this.cases.names);
+        },
+        keyup(e){
+          if(e.key=='Escape'){this.win.is=0;this.date_fn(0);}
+        },
+    }
+})
+        
+    </script>
+{{/block}}

@@ -1,0 +1,38 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ 
+ <style>
+    
+ </style>
+ <div class="box pic">
+    <div id="app">
+        
+    </div>
+</div>
+ <script type="text/javascript">
+
+$(document).ready(e=>{
+    $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+    
+})
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{}},
+        url_img:'',
+       
+        
+    },
+    created(){
+        
+    },
+    methods:{
+        get:function(e){
+            
+           
+        },
+       
+    }
+})
+</script>
+{{/block}}

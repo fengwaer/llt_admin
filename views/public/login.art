@@ -1,0 +1,49 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <style>
+    .nav{ display: none !important;}
+    .sub{width:100%; box-sizing: border-box;}
+    .in{ height: 40px;}
+    body{ background-image: url(/public/img/login_bg.jpg); background-size: cover;}
+    .box_1{ max-width: 80%; display:inline-block; margin:20vh auto; padding:10px 20px; border-radius:20px; text-align: center; background:rgba(255,255,255,0.9); overflow: hidden;}
+ </style>
+ <div class="box login" id="app">
+ <div @keyup='enter' class="box_1">
+    <div class="title" v-text='msg_random'></div>
+    <div class="li"><input placeholder='用户名' class='in' type='text' v-model="user"></div>
+    <div class="li"><input placeholder='密码' class='in' type='password' v-model='password'></div>
+    <div class="li" @click='login'><i class="bt1 sub">登陆</i></div>
+</div>
+</div>
+    <script type="text/javascript">
+var app = new Vue({
+    el: '#app',
+    data: {
+        user:null,
+        password:null,
+        msg:['每天都是小可爱呀~','今天你超美的勒~','每天笑一笑，开心多一天','左三圈右三圈，我们来做运动~','手脚冰冷吗？抖抖就吧冷啦~','快乐心情从早上微笑开始~','每一天你都是最棒哒~','又是元气满满的一天勒~','每天都要多喝水哟~'],
+        msg_random:'',
+    },
+    created:function(){
+        this.msg_random=this.msg[Math.floor(Math.random() * this.msg.length)];
+    },
+    methods:{
+        enter:function(e){
+            if(e.key=='Enter'){ this.login()}
+        },
+        login:function(){//请求登陆
+            $.ajax({url:'/login?user='+this.user+'&pwd='+this.password,success:function(res){
+                if(res.code==1){
+                    let user=eval(res.user);
+                    delete user.phone;delete user.pwd;
+                    localStorage.setItem('user',JSON.stringify(user));
+                    location.href='/case'
+                }else{
+                    ctl.tips_show('用户名或密码错误！');
+                }
+            }})
+        },
+    }
+})
+    </script>
+{{/block}}

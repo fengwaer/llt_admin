@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/public/cs/public.css' />
+    <link rel="stylesheet" href="/public/cs/datetime.css">
+    <script type="text/javascript" src="/public/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/public/js/vue.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.core.min.js"></script>
+    
+  </head>
+   <body>
+<div id='win' v-cloak>
+   <div class="tips" v-show="tips.is">
+      <p class='msg' v-text='tips.msg'></p>
+  </div>
+  <div class='wait' v-show='wait.is'>
+    <p class='msg' v-text='wait.msg'></p>
+  </div>
+  
+</div>
+<div class="flex">
+  {{ if path!='/zlsj_det'}}
+  {{include './nav'}}
+  {{/if}}
+  {{block 'content'}} {{/block}}
+  </div>
+</body>
+ <script type="text/javascript">
+var ctl = new Vue({
+    el: '#win',
+    data: {
+        tips:{is:0,msg:'我知道啦~'},
+        wait:{is:0,msg:'还在处理中呢,稍等一下下哟~...'},
+        wait_data:'',
+    },
+    created(){
+      window.addEventListener('keyup', this.keyup);
+    },
+    methods:{
+     get: function() {
+        let _this = this;
+        return $.ajax({
+            url: '/wait',
+            data: { get: 2, ...this.sch }
+        }).then(function(res) {
+            _this.wait_data = res.data[0];
+            if(res.data.length>0&&_this.cache_fn('wait_ID')!=res.data[0].Id){
+              _this.send_tell('今天有代办事项哟~',res.data[0].names)
+              _this.cache_fn('wait_ID',res.data[0].Id);
+            }
+            return res.data.length;  // ✅ 把这个值真正“返回”给 get() 的调用者
+        });
+    },
+    tips_show(msg,m=2){
+        this.tips.is=1;
+        this.tips.msg=msg;
+        setTimeout(()=>{this.tips.is=0},m*1000)
+      },
+      //等待窗口
+      wait_show(is,msg){
+        this.wait.is=is;
+        if(msg){this.wait.msg=msg;}
+      },
+      //上传文件
+      up_load:function(e){
+        const file=e.target.files[0]
+        let formData = new FormData();
+        formData.append('file', file);
+        return new Promise((resolve, reject) => {
+            $.ajax({url:'/upload',type:'post',data:formData,contentType: false,processData: false,success:function(re){
+              resolve(re)
+            }})
+        })
+      },
+      //读取Excel
+      read_ex(file,sheet){
+        return new Promise((rl, rj) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: "array" });
+                const firstSheetName = workbook.SheetNames[sheet];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header:true });
+                // 调用回调函数，返回 JSON 数据
+
+                rl(jsonData);
+            };
+            reader.readAsArrayBuffer(file);
+        })
+      },
+      //导出Excel【必须是2维数组】
+      ex_out(dt,json=1,name='表格'){
+          const workbook = XLSX.utils.book_new();
+          
+          dt.find((r1,idx)=>{
+            let worksheet;
+              if(json==1){worksheet = XLSX.utils.aoa_to_sheet(r1);}
+              else{worksheet=XLSX.utils.json_to_sheet(r1)}
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'sheet'+idx);
+          })
+          const excelBuffer = XLSX.write(workbook, {bookType:'xlsx', type:'buffer'});
+          const blob = new Blob([excelBuffer], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"});
+          const url = URL.createObjectURL(blob);
+
+          // 创建一个下载链接
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = name+'.xlsx'; // 指定下载文件名
+          document.body.appendChild(link);
+          link.click();
+          // 清理
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+      },
+      //读取图片
+      img_read(ee,msg) {
+        if(!msg){msg='你还没有选择图片哟！'}
+        return new Promise((re, rj) => {
+        const file = ee.target.files[0];
+        if (!file) {this.tips_show(msg);return;}
+        const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload =function(){
+              re(img)
+            };
+          };
+        reader.readAsDataURL(file);
+        })
+      },
+      send_tell(title, body) {// 发送浏览器通知
+            // 播放音效（如果提供）
+            const audio = new Audio('/public/today_wait.mp3');
+              audio.play().catch(e => console.warn("音效播放失败：", e));
+            // 弹出通知
+            new Notification(title, {body: body});
+      },
+      // 缓存
+      cache_fn(key,data) { 
+          if(data){localStorage.setItem(key, JSON.stringify(data));}
+          else{return JSON.parse(localStorage.getItem(key));}
+      },
+      golink:function(url){//跳转
+        window.open(url)
+      },
+        
+    }
+})
+</script>
+</html>
+
+

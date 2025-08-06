@@ -1,0 +1,91 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <style>
+    .box_1 .in{ margin-right:10px;}
+    .win p{ margin-bottom:10px;}
+    .bt3{ margin-right:10px;}
+    .fn_1{ width:110px;}
+    .user tbody td{ color:#333}
+ </style>
+ <div class="box user" id="app">
+    <div class="fn"><i class="bt2" @click="user={},win=true">添加</i><input class="in" type="text"  placeholder="请输入搜索关键字..."><i class="bt1 sch">搜索</i> </div>
+    <div class="table">
+    <table>
+        <thead><td>用户</td><td>电话</td><td>密码</td><td>操作</td></thead>
+        <tbody>
+        <tr v-for="us in data"><td class="name" v-text="us.names"></td><td v-text="us.phone"></td><td v-text="'•'.repeat(us.pwd?.length || 0)"></td>
+            <td class="fn_1"><i class="bt3" @click="user=us,win=true">修改</i><i class="bt0" @click=del(us.Id)>删除</i></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="win" v-show="win">
+    <div class="box_1"><i class="close" @click="win=false">Ⅹ</i>
+        <p><input type="text" class="in" v-model="user.names" placeholder="请输入用户名"></p>
+        <p><input type="text" class="in" v-model="user.phone" placeholder="请输入电话"></p>
+        <p><input type="text" class="in" v-model="user.pwd" placeholder="请输入密码"></p>
+        <p v-if="!user.Id"> <i class="bt1 add_cate" @click="add()">确定添加</i></p>
+        <p v-else><i class="bt1 add_cate" @click="update()">确定修改</i></p>
+    </div>
+</div>
+</div>
+    <script type="text/javascript">
+        $(document).ready(e=>{
+            $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+        })
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:false,
+        data:[],
+        user:{},
+    },
+    created(){
+       this.get();
+    },
+    methods:{
+        
+        get:function(){
+            let _this=this;
+            $.ajax({url:'/user/index',data:{get:1},success:function(res){
+                _this.data=res;
+            }})
+        },
+        add:function(){
+            let _this=this;
+                if(!this.user.names||this.user.names==''){ alert('用户名不能为空！');return;}
+                if(!this.user.pwd||this.user.pwd==''){ alert('密码不能为空！');return;}
+                $.ajax({url:'/user/index',data:{get:3,...this.user},success:function(res){
+                    _this.win=false;
+                    ctl.tips_show(res.msg);
+                    if(res.code==1){ctl.tips_show(res.msg);}
+                }})
+                
+        },
+        update:function(){
+            let _this=this;
+                if(!this.user.names||this.user.names==''){ alert('用户名不能为空！');return;}
+                if(!this.user.pwd||this.user.pwd==''){ alert('密码不能为空！');return;}
+                $.ajax({url:'/user/index',data:{get:2,...this.user},success:function(res){
+                    _this.win=false;
+                    ctl.tips_show(res.msg);
+                    if(res.code==1){setTimeout(() => {_this.get();}, 500);}
+                }})
+                
+        },
+        del:function(id){//删除
+            let _this=this;
+            if(confirm('警告！确定要删除该用户吗？')){
+                $.ajax({url:'/user/index',data:{get:4,id:id},success:function(res){
+                    ctl.tips_show(res.msg);
+                    setTimeout(() => {_this.get();}, 500);
+                }})
+            }
+        },
+        golink:function(url){//跳转
+            window.open(url)
+        },
+    }
+})
+        
+    </script>
+{{/block}}

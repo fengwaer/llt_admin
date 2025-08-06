@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/static/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>{{title}}</h1>
+    <p>欢迎来到错误页！</p>
+    <p>请检查地址后再试一下哟~</p>
+    <p>10秒钟后将自动返回主页！</p>
+  </body>
+  <script>
+  setTimeout(()=>{
+    location.href='/';
+  },5000)
+    
+  </script>
+</html>

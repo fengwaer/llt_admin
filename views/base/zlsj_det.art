@@ -1,0 +1,136 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <style>
+    .box_1 .in{ margin-right:10px;}
+    .win p{ margin-bottom:10px;}
+    .bt3{ margin-right:10px;}
+    .enter{font-size:18px; padding:10px 20px;}
+    .fn_1{ width:110px;}
+ </style>
+ <div class="box mdgl" id="app">
+    <div class="fn"><i class="bt2" @click="win.data={},win.is=1">新增收集</i>
+        <input v-model='sch' class="in" type="text"  placeholder="搜索资料..." @keyup.enter='search()'>
+        <i class="bt1 sch" @click='search()'>搜索</i> 
+    </div>
+    <div class="table">
+        <table>
+            <thead><td v-for="col of head_s" v-text="col"></td></thead>
+            <tbody>
+                <tr v-for="us of data">
+                    <td class="name" v-for="(i,row) of add_d"><i v-text="us[row]"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="win" v-if="win.is">
+        <div class="box_1"><i class="close" @click="win.is=0">Ⅹ</i>
+        <div class='box_2'>
+            <p v-for="(row,key,idx) of add_d"><b v-text="head_s[idx]+'：'"></b><input type="text" :placeholder="'输入'+head_s[idx]" v-model="add_d[key]" class="in"></p>
+            <p><i class="bt1 enter" @click="add()">确定</i></p>
+        </div>
+        </div>
+    </div>
+
+</div>
+ <script type="text/javascript">
+
+$(document).ready(e=>{
+    $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+    
+})
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{}},
+        sch:'',
+        add_d:{},
+        head_s:[],
+        data:[],
+        full_data:[],
+       
+        
+    },
+    created(){
+        if(this.cache('zlsj_{{id}}')==0){this.win.is=1};
+        this.get();
+    },
+    methods:{
+        get:function(e){
+            let _this=this;
+            $.ajax({url:'/zlsj_det',data:{get:1,id:'{{id}}',sch:this.sch},success:function(res){
+                _this.head_s=res[0][0].tb_head.split(/\r\n|\r|\n|、/);
+                _this.data=res[2];
+                _this.full_data = JSON.parse(JSON.stringify(res[2]));
+                res[1].forEach(col => {
+                    if (col.Field !== 'id') {
+                    _this.add_d[col.Field] = '';
+                    }
+                })
+            }});
+            
+        },
+        add:function(e){
+            if(this.cache('zlsj_{{id}}')){ctl.tips_show('您已填过了，请勿重复添加哦~');return;}
+            let _this=this;
+            let dd={get:2,id:'{{id}}',...this.add_d}
+            if(confirm('请仔细审核数据，再点确定')){
+            $.ajax({url:'/zlsj_det',data:dd,success:function(res){
+                _this.dts=res;_this.win.is=0;_this.get();ctl.tips_show('添加成功！');
+                _this.cache('zlsj_{{id}}',1);
+            }})
+            }else{ctl.tips_show('您点了取消！');}
+        },
+        del:function(e){
+
+        },
+        search(){
+            if (!this.sch) { // 如果搜索关键字为空
+                this.data = JSON.parse(JSON.stringify(this.full_data)); // 恢复到完整数据
+                return; // 停止后续的过滤操作
+            }
+
+            const result = new Set();
+            this.full_data.forEach(item => {
+                for (const key in item) {
+                    const value = String(item[key]); // 转成字符串
+                    if (value.includes(this.sch)) {
+                        result.add(JSON.stringify(item));
+                        break; // 找到匹配项后跳出内部循环
+                    }
+                }
+            });
+            this.data = Array.from(result).map(item => JSON.parse(item));
+        },
+        // 缓存
+        cache(key, type = 2, day = 7, value = '1') {
+        if (type === 1) { // 存
+            const data = {
+            value, // 保存真正的内容
+            expire: Date.now() + day * 24 * 60 * 60 * 1000,
+            };
+            try {
+            localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+            console.error('localStorage 存储失败', e);
+            }
+        } else { // 取
+            const cacheStr = localStorage.getItem(key);
+            if (!cacheStr) return 0;
+
+            try {
+            const cacheObj = JSON.parse(cacheStr);
+            if (Date.now() > cacheObj.expire) {
+                localStorage.removeItem(key);
+                return 0;
+            }
+            return 1;
+            } catch (e) {
+            localStorage.removeItem(key);
+            return 0;
+            }
+        }
+        },
+    }
+})
+</script>
+{{/block}}

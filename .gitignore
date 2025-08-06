@@ -1,0 +1,12 @@
+# Build and Release Folders
+
+
+node_modules/
+
+
+# Executables
+public.css
+*.swf
+*.air
+*.ipa
+*.apk

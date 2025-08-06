@@ -1,0 +1,45 @@
+<div class="nav">
+<a class='come' >欢迎：</a>
+<a href="/case">案件管理</a>
+<!-- <a href="/case_tj">案件统计</a> -->
+ <a href="/wait">待办事项<i id="wait"></i></a>
+<a class="pc" href="/zlsj">资料收集</a>
+<a class="pc" href="/pic">PDF与图片</a>
+<a id="user" href="/user/index">用户管理</a>
+<a href="/login?out=1" class="out">退出</a> 
+</div>
+ <script type="text/javascript">
+    $(document).ready(e=>{
+        if(JSON.parse(localStorage.getItem('user')))
+        $('.come').html(JSON.parse(localStorage.getItem('user')).names)
+        if(JSON.parse(localStorage.getItem('user')).Id>1){$('#user').hide();}
+        $('.nav a ').each(function(i,e){
+            if(location.href.indexOf($(e).attr('href'))!=-1){
+                $(e).addClass('on')
+                return false;
+            }
+        })
+        if(!$('.nav').is(':hidden')){
+            // if(Notification.permission !== "granted"){ctl.ask.is=1}
+            ctl.get().then(res=>{
+                if(res>0){$('#wait').html(res);}
+                else{$('#wait').hide();}
+                
+            });
+        }
+        
+    })
+    $('.come').click(()=>{
+        if($('.nav').hasClass('open')){$('.nav').removeClass('open');}
+        else{$('.nav').addClass('open');}
+    })
+    $('.nav a').click(function(){
+        if($(this).attr('href')!='/')
+        if(location.href.indexOf($(this).attr('href'))!=-1){return false;}
+    })
+    // $('.out').click(function(){
+    //      $.ajax({url:'/login',data:{out:1},success:function(res){
+    //             ctl.tips_show(res.msg);
+    //         }})
+    // })
+</script>

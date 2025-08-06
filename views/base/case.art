@@ -1,0 +1,280 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <style>
+    .box_1 .in{ margin-right:10px;}
+    .win p{ margin-bottom:10px;}
+    .bt3{ margin-right:10px;}
+    .fn_1{ width:110px;}
+    .c3{ text-align:center; font-size: 12px; }
+    /* .name i{color: #fff;} */
+    #calendar{ display: none; position:fixed; top:0; left:0; width:100%; height:100%; background: #fff; z-index:22;}
+ </style>
+ <script src="/public/js/datetime.js"></script>
+ <div id="calendar"></div>
+ <div class="box mdgl" id="app">
+    <div class="fn"><i class="bt2" @click="win.data={next_date:'',evidence_end:'',up_end:''},win.is=1">添加</i>
+        <input v-model='sch.sch' class="in" type="text"  placeholder="输入..." @keyup.enter='sch.page=0;sch.more=1;get()'>
+        <i class="bt1 sch" @click='sch.stage="";sch.page=0;sch.more=1;get()'>搜索</i> 
+        <select class="bt4" @change='stage_fn'>
+            <option v-for='sta of stage.arr' v-text='sta'></option>
+        </select>
+        
+        <b v-text='data.length'></b>
+    </div>
+    <div class="table">
+        <table>
+            <thead><td width='30%'>案件</td><td>案号</td><td>开庭日期</td><td>开庭地址</td><td>程序阶段</td><td>委托人</td><td>诉讼地位</td></thead>
+            <tbody>
+                <tr v-for="(us,idx) of data" :style="date_out(us)" @click="now_row=idx" :class="{now:now_row==idx}">
+                    <td class="name" @click='open_win(us)'><p class="c3" v-text="us.remark"></p><i v-text="us.names"></i></td>
+                    <td class="name" @click='open_win(us)'><i v-text="us.num"></i></td>
+                    <td class="name"><i v-text="us.next_date"></i></td>
+                    <td class="name"><i v-text="us.addr"></i></td>
+                    <td class="name" @click="ctl.golink('/timeline?id='+us.Id)"><i v-text="us.stage"></i></td>
+                    <td class="name"><i @click="gocall(us.client_call)" v-text="us.client"></i></td>
+                    <td class="name"><i v-text="us.role"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+<div class="win" v-if="win.is">
+    <div class="box_1"><i class="close" @click="win.is=false">Ⅹ</i><i class='del' @click='del(win.data.Id)'>删除</i>
+    <div class='box_2'>
+        <p class='ti' v-if=' win.data.Id' v-text="'委托日期：'+win.data.start_date"></p>
+        <p><b>案件：</b><textarea type="text" class="in" v-model="win.data.names"></textarea></p>
+        <p><b>案号：</b><input type="text" class="in" v-model="win.data.num"></p>
+        <p><b>委托费用：</b><input type="text" class="in" v-model="win.data.side_cost"></p> 
+        <p><b>程序阶段：</b>
+            <select class="in" v-model="win.data.stage" >
+                <option v-for='st of stage.arr' :value='st' v-text='st'></option>
+            </select>
+        </p>
+        <p><b>开庭地址：</b><input type="text" class="in" v-model="win.data.addr"></p>
+        <p><b>开庭日期：</b><input readonly type="text" class="in" v-model="win.data.next_date" @click="date_ps=0,date_fn(1)" /></p>
+        <p><b>审理法院：</b><input type="text" class="in" v-model="win.data.court"></p>
+        <p><b>续保截止日期：</b><input readonly type="text" class="in" v-model="win.data.xb_end" placeholder='选择日期'  @click="date_ps=4,date_fn(1)"></p>
+        <p><b>举证截止日期：</b><input readonly type="text" class="in" v-model="win.data.evidence_end" placeholder='选择日期' @click="date_ps=2,date_fn(1)" ></p> 
+        <p><b>收到判决日期：</b><input readonly type="text" class="in" v-model="win.data.make_date" placeholder='选择日期'  @click="date_ps=1,date_fn(1)"></p>
+        <p><b>上诉截止日期：</b><input readonly type="text" class="in" v-model="win.data.up_end" placeholder='选择日期'  @click="date_ps=3,date_fn(1)"></p>
+        <p class='ti' @click="gocall(win.data.client_call)">委托人</p>
+        <p><b>姓名：</b><input type="text" class="in" v-model="win.data.client"></p> <p><b>电话：</b><input type="text" class="in" v-model="win.data.client_call"></p>
+        <p><b>联系地址：</b><input type="text" class="in" v-model="win.data.client_addr"></p> <p><b>诉讼地位：</b><input type="text" class="in" v-model="win.data.role"></p> 
+        <p class='ti' @click="gocall(win.data.judge_call)">法官</p>
+        <p><b>姓名：</b><input type="text" class="in" v-model="win.data.judge"></p> <p><b>联系方式：</b><input type="text" class="in" v-model="win.data.judge_call"></p> 
+        <p class='ti' @click="gocall(win.data.clerk_call)">书记员</p>
+        <p><b>姓名：</b><input type="text" class="in" v-model="win.data.clerk"></p> <p><b>联系方式：</b><input type="text" class="in" v-model="win.data.clerk_call"></p> 
+        <p class='ti' @click="gocall(win.data.side_call)">对方当事人</p>
+        <p><b>姓名：</b><input type="text" class="in" v-model="win.data.side"></p> <p><b>联系方式：</b><input type="text" class="in" v-model="win.data.side_call"></p> 
+        <b>联系地址：</b><input type="text" class="in" v-model="win.data.side_addr"></p> 
+        <p class='ti' @click="gocall(win.data.side_atty_call)">对方代理人</p>
+        <p><b>姓名：</b><input type="text" class="in" v-model="win.data.side_atty"></p> <p><b>联系方式：</b><input type="text" class="in" v-model="win.data.side_atty_call"></p> 
+        <p class='ti'>更换</p>
+        <p v-show='win.data.Id'><b>代理律师：</b>
+            <select class="in" v-model="win.data.user" >
+                <option v-for='us of user_s' :value='us.Id' v-text='us.names'></option>
+            </select>
+        </p>
+        <p><b>代理律师*：</b><input type="text" class="in" v-model="win.data.agent" /></p>
+        
+    </div>
+    <p v-if=' win.data.Id'>
+        <i class="bt1" @click="update()">确定修改</i>
+    </p>
+    <p v-else><i class="bt1" @click="add()">确定添加</i></p>
+    </div>
+</div>
+
+<div class="win" v-if="win_2.is">
+    <div class="box_1"><i class="close" @click="win_2.is=false">Ⅹ</i>
+    <div class='box_2'>
+        <div class="table">
+        <table>
+            <thead><td width='30%'>时间</td><td>事件</td><td>备注</td><td>操作</td></thead>
+            <tbody>
+                <tr v-for="(dt,idx) of timeline_data">
+                    <td class="name"><input type="text" v-model="dt.date" readonly ></td>
+                    <td class="name"><input type="text" v-model="dt.event" readonly ></td>
+                    <td class="name"><input type="text" v-model="dt.notes" readonly ></td>
+                    <td class="name"><i class="bt2">修改</i></td>
+                </tr>
+                <tr><td colspan="4" class="nomore">没有更多事件啦~</td></tr>
+                <tr>
+                    <td class="name"><input class="in" type="text" ></td>
+                    <td class="name"><textarea class="in" type="text"></textarea></td>
+                    <td class="name"><input class="in" type="text"></td>
+                    <td class="name"><i class="bt2">新增</i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+    </div>
+</div>
+
+</div>
+<script type="text/javascript">
+    new Schedule({
+    el: '#calendar', // 渲染目标容器
+    showTime:true,
+    clickCb: function(dateStr) {
+        app.date_fn(0)
+        if(app.date_ps==0){app.win.data.next_date=dateStr}
+        else if(app.date_ps==1){app.win.data.make_date=dateStr}
+        else if(app.date_ps==2){app.win.data.evidence_end=dateStr}
+        else if(app.date_ps==3){app.win.data.up_end=dateStr}
+        else if(app.date_ps==4){app.win.data.xb_end=dateStr}
+    }
+  });
+        $(document).ready(e=>{
+            $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+            $('.table').on('scroll',function(){
+                if ($(this).find('table').height()-$(this).scrollTop()<820){
+                    app.get();
+                }
+            });
+        })
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{}},
+        win_2:{is:0,data:{}},
+        sch:{num:50,page:0,sch:'',user:'',stage:'',more:1},
+        sch_2:{num:50,page:0,sch:''},
+        data:[],
+        timeline_data:[],
+        dts:'',
+        nav_no:0,
+        stage:{arr:['一审','二审','再审','执行','结案','非诉'],is:0},
+        user_s:{arr:[],is:1},
+        user:JSON.parse(localStorage.getItem('user')),
+        date_ps:1,
+        now_row:-1,
+    },
+    created(){
+        this.win.data.user=this.user.Id;
+        window.addEventListener('keyup', this.keyup);
+        this.get();
+        setTimeout(() => {
+            let _this=this;
+            $.ajax({url:'/case',data:{get:5},success:function(res){
+                _this.user_s=res.data;
+            }})
+        }, 1000);
+        
+    },
+    methods:{
+        gets(){//测试
+            $.ajax({url:'/case',data:{get:0},success:function(res){
+                console.log(res)
+            }})
+        },
+        get:async function(){
+            let _this=this;
+            this.sch.user=this.user.Id;
+            if(this.sch.more==1){
+                this.sch.more=0;
+            $.ajax({url:'/case',data:{get:1,...this.sch},success:function(res){
+                _this.sch.more=1;
+                if(_this.sch.page==0){$('.table').animate({scrollTop:0},400); _this.data=res.data}
+                else{_this.data=_this.data.concat(res.data)}
+                if(res.data.length<50){_this.sch.more=0}
+                _this.sch.page++;
+            }})
+            }
+        },
+        get_line:function(id){//获取案件阶段
+            let _this=this;
+            
+            ctl.wait_show(1,'正在获取案件阶段...');
+            $.ajax({url:'/timeline',data:{get:1,case_id:id,...this.sch_2},success:function(res){
+                ctl.wait_show(0);
+                _this.win_2.data=res.data;
+                _this.win_2.is=1
+            }})
+        },
+       update:function(){//修改
+           let _this=this;
+            $.ajax({url:'/case',data:{get:2,...this.win.data},success:function(res){
+                _this.win.is=0;
+                if(res.code==0){ctl.tips_show('修改失败！')}
+                else{
+                    ctl.tips_show('修改成功！');
+                    _this.sch.page=0;
+                    _this.sch.more=1;
+                    setTimeout((e)=>{_this.get();},500)
+                }
+            }})
+        },
+        open_win:function(us){//打开窗口
+            this.win.data=us;this.win.is=1;
+        },
+        add:function(){
+            let _this=this;
+            this.win.data.user=this.user.Id;
+            if(!this.win.data.stage){ctl.tips_show('必须选择程序阶段'); return;}
+            $.ajax({url:'/case',data:{get:3,...this.win.data},success:function(res){
+                _this.win.is=0;
+                if(res.code==0){ctl.tips_show('添加失败！')}
+                else{ctl.tips_show('添加成功！');
+                    _this.sch.page=0;
+                    _this.sch.more=1;
+                    setTimeout((e)=>{_this.get();},500)
+                }
+                
+            }})
+        },
+        del:function(id){//删除
+            let _this=this;
+            this.win.is=0;
+            if(confirm('警告！确定要删除该案件吗？')){
+                $.ajax({url:'/case',data:{get:4,id:id},success:function(res){
+                    if(res.code==0){ctl.tips_show('删除失败！')}
+                    else{ctl.tips_show('删除成功！');
+                    _this.sch.page=0;
+                    _this.sch.more=1;
+                        setTimeout((e)=>{_this.get();},500)
+                    }
+                }})
+            }
+        },
+        stage_fn(e){//程序阶段        
+            this.stage.is=e.target.selectedIndex;
+            this.sch.stage=this.stage.arr[this.stage.is];
+            this.sch.page=0;
+            this.sch.more=1;
+            this.get();
+        },
+        date_out(us) {
+            let d = new Date(us.next_date);
+            let now = new Date();
+            let days = (d - now) / (1000 * 3600 * 24);
+            if(us.stage=='结案'){return '';}
+            else if (!us.next_date || days >= 10) {return "background:rgb(255,255,255)";}
+            else{let out = Math.round((days / 10) * 255);
+            out = Math.max(0, Math.min(255, out))-50; // 限制在 0~255 范围内
+            let style=`background:rgb(200,${out},${out});`;
+            if(days<5){ style+=`color:#fff; ` }
+            return style;}
+            
+        },
+         date_fn(is){//日历
+            if(is){$('#calendar').show();}
+            else{$('#calendar').hide();}
+        },
+        keyup(e){
+          if(e.key=='Escape'){
+            if(!$('#calendar').is(':hidden')){this.date_fn(0);return;}
+            this.win.is=0;
+        }
+        },
+        gocall:function(url){//跳转
+            const reg = /^(\d{11}|(\d{3,4})?\d{7,8})$/;
+            if(!reg.test(url))return
+            window.open('tel:'+url)
+        },
+    }
+})
+        
+    </script>
+{{/block}}
