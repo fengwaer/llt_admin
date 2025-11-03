@@ -41,6 +41,7 @@ const get= async (ctx, next) => {
             i.up_end = i.up_end?db.format('yyyy-MM-dd', i.up_end):null;
             i.make_date = i.make_date?db.format('yyyy-MM-dd', i.make_date):null;
             i.xb_end = i.xb_end?db.format('yyyy-MM-dd', i.xb_end):null;
+            i.end_date = i.end_date?db.format('yyyy-MM-dd', i.end_date):null;
         });
         ctx.body = { code: 1, data: res };
     });
@@ -52,7 +53,7 @@ const get= async (ctx, next) => {
         client = ?, client_call = ?, client_addr = ?, role = ?, 
         evidence_end = ?, up_end = ?, side = ?, side_call = ?, side_addr = ?,
         side_cost=?, side_atty = ?,side_atty_call = ?,xb_end = ?, make_date = ?,
-        court = ?, addr = ?, next_date = ?, remake = ?,
+        court = ?, addr = ?, next_date = ?, remake = ?,end_date = ?,
         agent=? WHERE Id = ?`;
 
     const values = [
@@ -61,7 +62,7 @@ const get= async (ctx, next) => {
         data.client, data.client_call, data.client_addr, data.role,
         data.evidence_end||null, data.up_end||null, data.side, data.side_call,data.side_addr,
         data.side_cost,data.side_atty,data.side_atty_call,data.xb_end||null,data.make_date||null,
-        data.court, data.addr, data.next_date||null, data.remake,
+        data.court, data.addr, data.next_date||null, data.remake,data.end_date,
         data.agent, data.Id  // WHERE 条件的 id
     ];
     try{

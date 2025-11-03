@@ -4,7 +4,7 @@ this.getSelectedDateTime = function () {
         return showTime ? activeDate + ' ' + concatTime(selectedHour, selectedMinute) : activeDate;
     }
     return '';
-};; (function (undefined) {
+}; (function (undefined) {
     var _global;
     //工具函数
     //配置合并

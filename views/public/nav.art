@@ -3,9 +3,10 @@
 <a href="/case">案件管理</a>
 <!-- <a href="/case_tj">案件统计</a> -->
  <a href="/wait">待办事项<i id="wait"></i></a>
+ <a id="user" href="/xdbj">心得笔记</a>
 <a class="pc" href="/zlsj">资料收集</a>
 <a class="pc" href="/pic">PDF与图片</a>
-<a id="user" href="/user/index">用户管理</a>
+<!-- <a id="user" href="/user/index">用户管理</a> -->
 <a href="/login?out=1" class="out">退出</a> 
 </div>
  <script type="text/javascript">

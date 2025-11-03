@@ -52,11 +52,11 @@ router(app);//路由
 
 app.listen(83)
 //https服务
-const opt = {
-  key: fs.readFileSync('182.148.55.99.key'),  // 私钥文件路径
-  cert: fs.readFileSync('182.148.55.99.pem'),     // 证书文件路径
-  port:93,
-};
-https.createServer(opt, app.callback()).listen(opt.port, () => {});
+// const opt = {
+//   key: fs.readFileSync('182.148.55.99.key'),  // 私钥文件路径
+//   cert: fs.readFileSync('182.148.55.99.pem'),     // 证书文件路径
+//   port:93,
+// };
+// https.createServer(opt, app.callback()).listen(opt.port, () => {});
 
 console.log('http://localhost:83');

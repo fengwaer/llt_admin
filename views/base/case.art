@@ -23,13 +23,13 @@
     </div>
     <div class="table">
         <table>
-            <thead><td width='30%'>案件</td><td>案号</td><td>开庭日期</td><td>开庭地址</td><td>程序阶段</td><td>委托人</td><td>诉讼地位</td></thead>
+            <thead><td width='30%'>案件</td><td>案号</td><td v-text="sch.stage=='结案'?'结案日期':'开庭日期'"></td><td>程序阶段</td><td>委托人</td><td>诉讼地位</td></thead>
             <tbody>
                 <tr v-for="(us,idx) of data" :style="date_out(us)" @click="now_row=idx" :class="{now:now_row==idx}">
                     <td class="name" @click='open_win(us)'><p class="c3" v-text="us.remark"></p><i v-text="us.names"></i></td>
                     <td class="name" @click='open_win(us)'><i v-text="us.num"></i></td>
-                    <td class="name"><i v-text="us.next_date"></i></td>
-                    <td class="name"><i v-text="us.addr"></i></td>
+                    <td class="name"><i v-text="sch.stage=='结案'? us.end_date : us.next_date"></i></td>
+                    <td class="name"><i v-text="us.addr"></i></br><b class="exp c0" v-show="us.remake" v-text="us.remake" @click="copy(us.remake)"></b></td>
                     <td class="name" @click="ctl.golink('/timeline?id='+us.Id)"><i v-text="us.stage"></i></td>
                     <td class="name"><i @click="gocall(us.client_call)" v-text="us.client"></i></td>
                     <td class="name"><i v-text="us.role"></i></td>
@@ -42,9 +42,10 @@
     <div class="box_1"><i class="close" @click="win.is=false">Ⅹ</i><i class='del' @click='del(win.data.Id)'>删除</i>
     <div class='box_2'>
         <p class='ti' v-if=' win.data.Id' v-text="'委托日期：'+win.data.start_date"></p>
-        <p><b>案件：</b><textarea type="text" class="in" v-model="win.data.names"></textarea></p>
+        <p><b>案件：</b><textarea type="text" class="in" v-model="win.data.names" rows="4"></textarea></p>
         <p><b>案号：</b><input type="text" class="in" v-model="win.data.num"></p>
         <p><b>委托费用：</b><input type="text" class="in" v-model="win.data.side_cost"></p> 
+        <p><b>资料位置：</b><input type="text" class="in" v-model="win.data.remake"></p> 
         <p><b>程序阶段：</b>
             <select class="in" v-model="win.data.stage" >
                 <option v-for='st of stage.arr' :value='st' v-text='st'></option>
@@ -57,6 +58,13 @@
         <p><b>举证截止日期：</b><input readonly type="text" class="in" v-model="win.data.evidence_end" placeholder='选择日期' @click="date_ps=2,date_fn(1)" ></p> 
         <p><b>收到判决日期：</b><input readonly type="text" class="in" v-model="win.data.make_date" placeholder='选择日期'  @click="date_ps=1,date_fn(1)"></p>
         <p><b>上诉截止日期：</b><input readonly type="text" class="in" v-model="win.data.up_end" placeholder='选择日期'  @click="date_ps=3,date_fn(1)"></p>
+        <p class='ti'>更换</p>
+        <p v-show='win.data.Id'><b>代理律师：</b>
+            <select class="in" v-model="win.data.user" >
+                <option v-for='us of user_s' :value='us.Id' v-text='us.names'></option>
+            </select>
+        </p>
+        <p><b>代理律师*：</b><input type="text" class="in" v-model="win.data.agent" /></p>
         <p class='ti' @click="gocall(win.data.client_call)">委托人</p>
         <p><b>姓名：</b><input type="text" class="in" v-model="win.data.client"></p> <p><b>电话：</b><input type="text" class="in" v-model="win.data.client_call"></p>
         <p><b>联系地址：</b><input type="text" class="in" v-model="win.data.client_addr"></p> <p><b>诉讼地位：</b><input type="text" class="in" v-model="win.data.role"></p> 
@@ -69,17 +77,12 @@
         <b>联系地址：</b><input type="text" class="in" v-model="win.data.side_addr"></p> 
         <p class='ti' @click="gocall(win.data.side_atty_call)">对方代理人</p>
         <p><b>姓名：</b><input type="text" class="in" v-model="win.data.side_atty"></p> <p><b>联系方式：</b><input type="text" class="in" v-model="win.data.side_atty_call"></p> 
-        <p class='ti'>更换</p>
-        <p v-show='win.data.Id'><b>代理律师：</b>
-            <select class="in" v-model="win.data.user" >
-                <option v-for='us of user_s' :value='us.Id' v-text='us.names'></option>
-            </select>
-        </p>
-        <p><b>代理律师*：</b><input type="text" class="in" v-model="win.data.agent" /></p>
+        
         
     </div>
     <p v-if=' win.data.Id'>
         <i class="bt1" @click="update()">确定修改</i>
+        <i class="bt5 fr" v-if="win.data.stage!='结案'" @click="end_date()">结案</i>
     </p>
     <p v-else><i class="bt1" @click="add()">确定添加</i></p>
     </div>
@@ -206,6 +209,19 @@ var app = new Vue({
                 }
             }})
         },
+        end_date(){//结案
+            if(confirm('确定结束该案件吗？')){
+                this.win.data.stage='结案'
+                this.win.data.end_date=ctl.format('yyyy-MM-dd')
+                this.update();
+                let Line_dt={case_id:this.win.data.Id,date:ctl.format('yyyy-MM-dd'),event:'已结案'};
+                $.ajax({url:'/timeline',data:{get:3,...Line_dt},success:function(res){
+                    if(res.code==0){ctl.tips_show('结案失败！')}
+                    else{ctl.tips_show('完成结案！');
+                    }
+                }})
+            }
+        },
         open_win:function(us){//打开窗口
             this.win.data=us;this.win.is=1;
         },
@@ -246,14 +262,15 @@ var app = new Vue({
             this.get();
         },
         date_out(us) {
-            let d = new Date(us.next_date);
+            let d = new Date(us.next_date),out;
             let now = new Date();
             let days = (d - now) / (1000 * 3600 * 24);
             if(us.stage=='结案'){return '';}
             else if (!us.next_date || days >= 10) {return "background:rgb(255,255,255)";}
-            else{let out = Math.round((days / 10) * 255);
-            out = Math.max(0, Math.min(255, out))-50; // 限制在 0~255 范围内
-            let style=`background:rgb(200,${out},${out});`;
+            else{out = Math.round((days / 10) * 255);
+                // alert(days)
+            out = Math.max(0, Math.min(255, out))-20; // 限制在 0~255 范围内
+            let style=`background:rgb(${200},${out},${out});`;
             if(days<5){ style+=`color:#fff; ` }
             return style;}
             
@@ -267,6 +284,26 @@ var app = new Vue({
             if(!$('#calendar').is(':hidden')){this.date_fn(0);return;}
             this.win.is=0;
         }
+        },
+        //复制
+        copy(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                // 使用 Clipboard API
+                return navigator.clipboard.writeText(text).then(() => ctl.tips_show('复制成功'))
+            } else {
+                // Fallback 方法
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    ctl.tips_show('复制成功')
+                } catch (err) {
+                    console.error('复制失败:', err);
+                }
+                document.body.removeChild(textarea);
+            }
         },
         gocall:function(url){//跳转
             const reg = /^(\d{11}|(\d{3,4})?\d{7,8})$/;

@@ -23,6 +23,10 @@ router.get('/timeline',c_timeline.get);//时间线
 const c_wait=require('../controls/base/wait');
 router.get('/wait',c_wait.get);
 
+//心得笔记
+const c_xdbj=require('../controls/base/xdbj');
+router.get('/xdbj',c_xdbj.get);
+
 
 //资料收集
 const c_zlsj=require('../controls/base/zlsj');

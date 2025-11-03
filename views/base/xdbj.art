@@ -1,0 +1,104 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ <style>
+    .box_1 .in{ margin-right:10px;}
+    .win p{ margin-bottom:10px;}
+    .bt3{ margin-right:10px;}
+    .fn_1{ width:110px;}
+    .c3{ text-align:center; font-size: 12px;}
+ </style>
+
+ <div class="box mdgl" id="app">
+    <div class="fn"><i class="bt2" @click="win.data={names:'',date:''},win.is=1">添加</i>
+        <input v-model='sch.sch' class="in" type="text"  placeholder="输入..." @keyup.enter='sch.page=0;sch.more=1;get()'>
+        <i class="bt1 sch" @click='sch.page=0;sch.more=1;get()'>搜索</i> 
+        <select class="bt4" @change='get();' v-model="sch.type">
+            <option v-for='t of type' v-text='t.type' :value="t.type"></option>
+        </select>
+        <b v-text='data.length'></b>
+    </div>
+    <div class="xdbj">
+        <div class="li" v-for="dt of data">
+            <p class="ti" v-text="dt.type" @click="del(dt.id)"></p>
+            <div class="txt" v-html="dt.txt" @click="win.data=dt,win.is=1"></div>
+        </div>
+    </div>
+
+<div class="win" v-if="win.is">
+    <div class="box_1"><i class="close" @click="win.is=false">Ⅹ</i>
+    <div class='box_2'>
+        <p><b>类型：</b><input type="text" class="in" v-model="win.data.type"></p>
+        <p><b>内容：</b><textarea id="editor" class="in" v-model="win.data.txt" rows="4"></textarea></p>
+        
+    </div>
+    <p><i class="bt1" @click="add()">提交</i></p>
+    </div>
+</div>
+
+</div>
+<script type="text/javascript">
+
+        $(document).ready(e=>{
+            $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+            $('.table').on('scroll',function(){
+                if ($(this).find('table').height()-$(this).scrollTop()<820){
+                    app.get();
+                }
+            });
+        })
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{date:''}},
+        sch:{num:50,page:0,sch:'',type:'',more:1},
+        type:[],
+        data:[],
+        date_ps:1,
+    },
+    created(){
+        window.addEventListener('keyup', this.keyup);
+        this.get();
+    },
+    methods:{
+          get:function(id){//获取数据
+            let _this=this;
+            $.ajax({url:'/xdbj',data:{get:1,...this.sch},success:function(res){
+                _this.data=res.data[1];
+                _this.type=[{id:-1,type:null},...res.data[0]];
+            }})
+        },
+        open_win:function(us){//打开窗口
+            this.win.data=us;this.win.is=1;
+        },
+        add:function(){//添加或修改
+            let _this=this,get=2;
+            if(this.win.data.id){get=3}else{get=2}
+            $.ajax({url:'/xdbj',data:{get:get,...this.win.data},success:function(res){
+                _this.win.is=0;
+                if(res.code==0){ctl.tips_show('操作失败！')}
+                else{ctl.tips_show('操作成功！');
+                    setTimeout((e)=>{_this.get();},500)
+                }
+                
+            }})
+        },
+        del:function(id){//删除
+            let _this=this;
+            this.win.is=0;
+            if(confirm('警告！确定要删除该笔记吗？')){
+                $.ajax({url:'/xdbj',data:{get:0,id:id},success:function(res){
+                    if(res.code==0){ctl.tips_show(res.msg)}
+                    else{ctl.tips_show(res.msg);
+                        setTimeout((e)=>{_this.get();},500)
+                    }
+                }})
+            }
+        },
+        keyup(e){
+          if(e.key=='Escape'){this.win.is=0;}
+        },
+    }
+})
+        
+    </script>
+{{/block}}

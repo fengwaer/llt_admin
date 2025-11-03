@@ -22,7 +22,7 @@
     </div>
     <div class="table">
         <table>
-            <thead><td width='30%'>时间</td><td>事件</td><td>备注</td></thead>
+            <thead><td width='100'>时间</td><td>事件</td><td width="200">备注</td></thead>
             <tbody>
                 <tr v-for="(dt,idx) of data" @click="open_win(dt)">
                     <td class="name"><i v-text="dt.date"  ></td>
@@ -102,7 +102,7 @@ var app = new Vue({
         open_win:function(us){//打开窗口
             this.win.data=us;this.win.is=1;
         },
-        add:function(){
+        add:function(){//添加案件阶段
             let _this=this;
             this.win.data.case_id=this.sch.case_id;
             $.ajax({url:'/timeline',data:{get:3,...this.win.data},success:function(res){
