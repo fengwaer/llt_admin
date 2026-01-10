@@ -10,6 +10,15 @@
   </head>
    <body>
 <div id='win' v-cloak>
+  <audio ref="audio" src="/public/lastCristmas.mp3" loop controls style=" display: none;"></audio>
+  <!-- 圣诞节装饰 -->
+  <!-- <img class="crms top_l" src="/public/img/top_2.png"> -->
+  <!-- <div class="crms top_c"></div> -->
+  <!-- <img class="crms top_r" src="/public/img/top.png">
+  <img class="crms bot_l" src="/public/img/top.png">
+  <img class="crms bot_r" @click="play" src="/public/img/top.png"> -->
+  <!-- end -->
+
    <div class="tips" v-show="tips.is">
       <p class='msg' v-text='tips.msg'></p>
   </div>
@@ -23,6 +32,7 @@
   {{include './nav'}}
   {{/if}}
   {{block 'content'}} {{/block}}
+  
   </div>
 </body>
  <script type="text/javascript">
@@ -33,7 +43,7 @@ var ctl = new Vue({
         wait:{is:0,msg:'还在处理中呢,稍等一下下哟~...'},
         wait_data:'',
     },
-    created(){
+    mounted(){
       window.addEventListener('keyup', this.keyup);
     },
     methods:{
@@ -50,6 +60,11 @@ var ctl = new Vue({
             }
             return res.data.length;  // ✅ 把这个值真正“返回”给 get() 的调用者
         });
+    },
+    play(){
+      let aud=this.$refs.audio;
+      if(aud.paused){aud.play()}
+      else{aud.pause()}
     },
     tips_show(msg,m=2){
         this.tips.is=1;

@@ -18,12 +18,12 @@
         <select class="bt4" @change='stage_fn'>
             <option v-for='sta of stage.arr' v-text='sta'></option>
         </select>
-        
         <b v-text='data.length'></b>
+        <i class="bt3 rotate" @click='ctl.play'>M</i> 
     </div>
     <div class="table">
         <table>
-            <thead><td width='30%'>案件</td><td>案号</td><td v-text="sch.stage=='结案'?'结案日期':'开庭日期'"></td><td>程序阶段</td><td>委托人</td><td>诉讼地位</td></thead>
+            <thead><td width='30%'>案件</td><td>案号</td><td v-text="sch.stage=='结案'?'结案日期':'开庭日期'"></td><td>开庭地址</td><td>程序阶段</td><td>委托人</td><td>诉讼地位</td></thead>
             <tbody>
                 <tr v-for="(us,idx) of data" :style="date_out(us)" @click="now_row=idx" :class="{now:now_row==idx}">
                     <td class="name" @click='open_win(us)'><p class="c3" v-text="us.remark"></p><i v-text="us.names"></i></td>
@@ -52,7 +52,7 @@
             </select>
         </p>
         <p><b>开庭地址：</b><input type="text" class="in" v-model="win.data.addr"></p>
-        <p><b>开庭日期：</b><input readonly type="text" class="in" v-model="win.data.next_date" @click="date_ps=0,date_fn(1)" /></p>
+        <p><b>开庭日期：</b><input type="text" class="in" v-model="win.data.next_date" @click="date_ps=0,date_fn(1)" /></p>
         <p><b>审理法院：</b><input type="text" class="in" v-model="win.data.court"></p>
         <p><b>续保截止日期：</b><input readonly type="text" class="in" v-model="win.data.xb_end" placeholder='选择日期'  @click="date_ps=4,date_fn(1)"></p>
         <p><b>举证截止日期：</b><input readonly type="text" class="in" v-model="win.data.evidence_end" placeholder='选择日期' @click="date_ps=2,date_fn(1)" ></p> 

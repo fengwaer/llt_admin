@@ -35,10 +35,23 @@ table{border-collapse: collapse;  width:100%;
     .come{ color:#999; font-weight: bold;}
     .on{ color:#0ff; font-weight: bold;}
     a,div{ display: block; padding:10px 10px 10px 0px; cursor: pointer;}
-    a:hover{ background: #333;}
-    *{ color: #fff; font-size:16px;}
+    a:hover{ color: #0ff;}
+    *{ color: #fff; font-size:16px; position:relative; z-index:20;}
 }
 .tox-statusbar{ display: none !important;}//隐藏富文本logo
+
+//圣诞节
+.crms{ position: fixed; z-index: 8;}
+.top_l{ left:0px; top: 0px; width:120px;}
+.top_c{ left:0px; top: 0px; width:100%; height:30px; background: url('/public/img/deng.png') repeat-x; background-size:contain;}
+.top_r{ right:-5px; top: -5px; width:150px; transform: scaleX(-1);}
+.bot_l{ left:0px; bottom: -5px; width:150px; transform: scaleY(-1);}
+.bot_r{ right:0px; bottom: -5px; width:150px; transform: scale(-1, -1);}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+.rotate{animation: spin 2s linear infinite; width: 19px !important;}
 
 
 
@@ -62,7 +75,7 @@ table{border-collapse: collapse;  width:100%;
 
 //表格样式
 .mdgl{ 
-    .table{ height:calc(100vh - 50px); min-width:60%; overflow:auto;
+    .table{ height:calc(100vh - 55px); min-width:60%; overflow:auto; position: relative;
         thead{ position:sticky; top:0px;}
         .now{ background: #346 !important;}
         .now *{color: #fff;}
@@ -82,6 +95,7 @@ table{border-collapse: collapse;  width:100%;
 .xdbj{display:grid;gap:10px;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); padding:5px;
     .li{ box-shadow:1px 1px 5px rgba(0,0,0,0.3); padding:18px 8px 8px; border-radius:10px; background: #ffc; position: relative; color: #444; cursor: pointer; overflow: hidden;
         .ti{ position: absolute; left:0px; top:0px; padding:0px 8px; background: #19f; color: #fff;} 
+        .txt{ height:118px; overflow: hidden; text-overflow: ellipsis;}
     }
     
 }
@@ -172,7 +186,7 @@ table{border-collapse: collapse;  width:100%;
    
   /* 当屏幕宽度大于或等于768像素时，改为浮动布局 */
   @media (max-width: 768px) {
-    .nav {width:40px; height:40px; background: none; margin: 0 auto;padding:0px;position: fixed;right:10px;bottom:10px; overflow: hidden; transition: all 0.5s;
+    .nav {width:40px; height:40px; background: none; margin: 0 auto;padding:0px;position: fixed;right:10px;bottom:10px; overflow: hidden; transition: all 0.5s; position: fixed; z-index:8;
       a{ display:flex; width:100%; height:40px; border-radius:30px; overflow: hidden; background: #444; padding:0px; }
       a{ align-items: center; justify-content: center; font-size:14px; text-align: center; font-weight: normal; margin-bottom:5px; position: relative;}
       

@@ -7,7 +7,7 @@
     .fn_1{ width:110px;}
     .c3{ text-align:center; font-size: 12px;}
  </style>
-
+<link href="/public/cs/quill.snow.css" rel="stylesheet">
  <div class="box mdgl" id="app">
     <div class="fn"><i class="bt2" @click="win.data={names:'',date:''},win.is=1">添加</i>
         <input v-model='sch.sch' class="in" type="text"  placeholder="输入..." @keyup.enter='sch.page=0;sch.more=1;get()'>
@@ -28,7 +28,7 @@
     <div class="box_1"><i class="close" @click="win.is=false">Ⅹ</i>
     <div class='box_2'>
         <p><b>类型：</b><input type="text" class="in" v-model="win.data.type"></p>
-        <p><b>内容：</b><textarea id="editor" class="in" v-model="win.data.txt" rows="4"></textarea></p>
+        <div v-if="win.is" ref="editor"></div>
         
     </div>
     <p><i class="bt1" @click="add()">提交</i></p>
@@ -36,8 +36,8 @@
 </div>
 
 </div>
+<script src="/public/js/quill.js"></script>
 <script type="text/javascript">
-
         $(document).ready(e=>{
             $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
             $('.table').on('scroll',function(){
@@ -54,10 +54,48 @@ var app = new Vue({
         type:[],
         data:[],
         date_ps:1,
+        quill: null,
     },
     created(){
         window.addEventListener('keyup', this.keyup);
         this.get();
+    },
+    watch: {
+        // 只要弹窗打开，就立即安全初始化 Quill
+        'win.is'(newVal) {
+            if (newVal) {
+                this.$nextTick(() => {
+                    // 防止重复初始化
+                    if (this.quill) {
+                        this.quill = null; // 先销毁旧实例（可选）
+                        this.$refs.editor.innerHTML = ''; // 清空容器
+                    }
+                    // 此时 ref="editor" 的 DOM 100% 已经渲染好了
+                    if (!this.quill) {
+                        this.quill = new Quill(this.$refs.editor, {
+                            theme: 'snow',
+                            modules: {
+                                toolbar: [
+                                    ['bold', 'italic', 'underline'],
+                                    [{ 'color': [] }],
+                                    [{ 'size': [] }]
+                                ]
+                            }
+                        });
+
+                        // 如果是编辑状态，回填内容
+                        if (this.win.data.txt) {
+                            this.quill.root.innerHTML = this.win.data.txt;
+                        }
+
+                        // 可选：监听内容变化，实时同步到 win.data.txt
+                        this.quill.on('text-change', () => {
+                            this.win.data.txt = this.quill.root.innerHTML;
+                        });
+                    }
+                });
+            }
+        }
     },
     methods:{
           get:function(id){//获取数据
@@ -68,19 +106,26 @@ var app = new Vue({
             }})
         },
         open_win:function(us){//打开窗口
+            this.win.data = { ...dt };  // 浅拷贝避免污染原数据
             this.win.data=us;this.win.is=1;
         },
         add:function(){//添加或修改
-            let _this=this,get=2;
-            if(this.win.data.id){get=3}else{get=2}
-            $.ajax({url:'/xdbj',data:{get:get,...this.win.data},success:function(res){
-                _this.win.is=0;
-                if(res.code==0){ctl.tips_show('操作失败！')}
-                else{ctl.tips_show('操作成功！');
-                    setTimeout((e)=>{_this.get();},500)
-                }
-                
-            }})
+           // 确保最新内容已同步
+        if (this.quill) {
+            this.win.data.txt = this.quill.root.innerHTML;
+        }
+
+        // 然后再发请求...
+        let get = this.win.data.id ? 3 : 2;
+        $.ajax({
+            url: '/xdbj',
+            data: { get, ...this.win.data },
+            success: (res) => {
+                this.win.is = 0;
+                ctl.tips_show(res.code == 0 ? '操作失败！' : '操作成功！');
+                if (res.code != 0) setTimeout(() => this.get(), 500);
+            }
+        });
         },
         del:function(id){//删除
             let _this=this;
@@ -97,6 +142,7 @@ var app = new Vue({
         keyup(e){
           if(e.key=='Escape'){this.win.is=0;}
         },
+        
     }
 })
         
