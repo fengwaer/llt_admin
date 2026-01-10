@@ -8,8 +8,20 @@
     <script type="text/javascript" src="/public/js/vue.js"></script>
     <script type="text/javascript" src="/public/js/xlsx.core.min.js"></script> 
   </head>
+  <style>
+    #lottie{ width:100vw;height: 100vh; position: fixed; left:0px; top:0px;z-index: 99;}
+  </style>
    <body>
 <div id='win' v-cloak>
+  <audio ref="audio" src="/public/lastCristmas.mp3" loop controls style=" display: none;"></audio>
+  <!-- 圣诞节装饰 -->
+  <!-- <img class="crms top_l" src="/public/img/top_2.png"> -->
+  <!-- <div class="crms top_c"></div> -->
+  <!-- <img class="crms top_r" src="/public/img/top.png">
+  <img class="crms bot_l" src="/public/img/top.png">
+  <img class="crms bot_r" @click="play" src="/public/img/top.png"> -->
+  <!-- end -->
+   <div id="lottie"></div>
    <div class="tips" v-show="tips.is">
       <p class='msg' v-text='tips.msg'></p>
   </div>
@@ -23,9 +35,28 @@
   {{include './nav'}}
   {{/if}}
   {{block 'content'}} {{/block}}
+  
   </div>
 </body>
- <script type="text/javascript">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+<script type="text/javascript">
+
+window.onload = function() {
+  if(!localStorage.getItem('lot')){
+  var lot=lottie.loadAnimation({
+    container: document.getElementById('lottie'), // 容器
+    renderer: 'svg', // 或 canvas
+    loop: false,
+    autoplay: true,
+    path: '/public/js/tw2.json', // 你的动画json文件路径
+  });
+  lot.addEventListener('complete', function() {
+    $('#lottie').hide(); // 这里可以用你习惯的 jQuery 写法
+    ctl.cache_fn('lot',1)
+  });
+  }else{$('#lottie').hide();}
+}
+
 var ctl = new Vue({
     el: '#win',
     data: {
@@ -33,7 +64,7 @@ var ctl = new Vue({
         wait:{is:0,msg:'还在处理中呢,稍等一下下哟~...'},
         wait_data:'',
     },
-    created(){
+    mounted(){
       window.addEventListener('keyup', this.keyup);
     },
     methods:{
@@ -50,6 +81,11 @@ var ctl = new Vue({
             }
             return res.data.length;  // ✅ 把这个值真正“返回”给 get() 的调用者
         });
+    },
+    play(){
+      let aud=this.$refs.audio;
+      if(aud.paused){aud.play()}
+      else{aud.pause()}
     },
     tips_show(msg,m=2){
         this.tips.is=1;

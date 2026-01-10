@@ -62,7 +62,7 @@ const get= async (ctx, next) => {
         data.client, data.client_call, data.client_addr, data.role,
         data.evidence_end||null, data.up_end||null, data.side, data.side_call,data.side_addr,
         data.side_cost,data.side_atty,data.side_atty_call,data.xb_end||null,data.make_date||null,
-        data.court, data.addr, data.next_date||null, data.remake,data.end_date,
+        data.court, data.addr, data.next_date||null, data.remake,data.end_date||null,
         data.agent, data.Id  // WHERE 条件的 id
     ];
     try{
