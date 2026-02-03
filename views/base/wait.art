@@ -70,7 +70,6 @@ var app = new Vue({
     created(){
         window.addEventListener('keyup', this.keyup);
         this.get();
-        
     },
     methods:{
           get:function(id){//获取待办事件
@@ -82,7 +81,7 @@ var app = new Vue({
         open_win:function(us){//打开窗口
             this.win.data=us;this.win.is=1;
         },
-        add:function(){
+        add:function(){//新增
             let _this=this;
             $.ajax({url:'/wait',data:{get:3,...this.win.data},success:function(res){
                 _this.win.is=0;

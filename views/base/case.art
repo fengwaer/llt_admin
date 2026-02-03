@@ -21,7 +21,7 @@
         <b v-text='data.length'></b>
         <i class="bt3 rotate" @click='ctl.play'>M</i> 
     </div>
-    <div class="table">
+    <div class="table"  v-clock>
         <table>
             <thead><td width='30%'>案件</td><td>案号</td><td v-text="sch.stage=='结案'?'结案日期':'开庭日期'"></td><td>开庭地址</td><td>程序阶段</td><td>委托人</td><td>诉讼地位</td></thead>
             <tbody>
@@ -266,11 +266,11 @@ var app = new Vue({
             let now = new Date();
             let days = (d - now) / (1000 * 3600 * 24);
             if(us.stage=='结案'){return '';}
-            else if (!us.next_date || days >= 10) {return "background:rgb(255,255,255)";}
+            else if (!us.next_date || days >= 10) {return "background:rgb(255,255,200)";}
             else{out = Math.round((days / 10) * 255);
                 // alert(days)
             out = Math.max(0, Math.min(255, out))-20; // 限制在 0~255 范围内
-            let style=`background:rgb(${200},${out},${out});`;
+            let style=`background:rgb(${255},${out},${out});`;
             if(days<5){ style+=`color:#fff; ` }
             return style;}
             

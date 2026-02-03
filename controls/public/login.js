@@ -7,7 +7,7 @@ module.exports= async (ctx,res, next) => {
     try{
     await db.query(`select * from user where (phone="${obj.user}" or names="${obj.user}") and pwd="${obj.pwd}"`).then(res=>{
       if(res.length>0){
-        let token=jwt.sign(obj,'bx',{expiresIn:"30d"})
+        let token=jwt.sign(obj,'llt',{expiresIn:"30d"})
         ctx.cookies.set('token',token,{maxAge:30*1000*60*60*24});
         ctx.body={code:1,msg:'登陆成功',user:res[0]};
       }else{
