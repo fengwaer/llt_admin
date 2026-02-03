@@ -17,6 +17,9 @@ const jwt=require('jsonwebtoken');
 
 
 // app.use(koalog);//日志
+//定时任务
+const {schedule}=require('./db/Settime');
+schedule();
 
 app.use(cors());
 app.use(koaBody({formLimit:'50mb',jsonLimit:'50mb',multipart: true,formidable:{uploadDir:'public/upload/',keepExtensions: true}}));
@@ -27,7 +30,7 @@ cmd.exec('npm run sass');//执行命令行解析sass
 
 err500(app, {template: '/views/500'})// 500 error
 
-function isToken(token) {try {jwt.verify(token,'bx');return true; } catch (err) {return false;}}//检测token
+function isToken(token) {try {jwt.verify(token,'llt');return true; } catch (err) {return false;}}//检测token
 
 app.use(async (req,next)=>{//检测登陆状态
   let cookie=req.cookies.get('token');
