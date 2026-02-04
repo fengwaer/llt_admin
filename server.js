@@ -18,7 +18,7 @@ const jwt=require('jsonwebtoken');
 
 // app.use(koalog);//日志
 //定时任务
-const {schedule}=require('./db/Settime');
+const {schedule,test}=require('./db/Settime');
 schedule();
 
 app.use(cors());
