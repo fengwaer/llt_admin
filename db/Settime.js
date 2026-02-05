@@ -9,7 +9,7 @@ const task = async () => {
     const sql = `INSERT INTO wait (names, date) VALUES (?, ?)`;
     const values = ['每天学习一个案例。一定要记住哟。不记住就打屁股~',todayStr];
     try{
-        await db.query(sql, values).then(re=>{})
+        await db.query(sql, values).then(re=>{ console.log('添加成功')})
     }catch(err){
         console.log('添加失败',err);
     }
@@ -30,7 +30,7 @@ const schedule = () => {
         timezone: 'Asia/Shanghai' // 中国时区
     });
    
-    console.log('定时任务已设置，每天上午 10 点执行');
+    console.log('定时任务已设置，每天2点 点执行');
 };
 // setTimeout(() => {
 //     task();
