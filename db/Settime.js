@@ -34,7 +34,7 @@ const schedule = () => {
         timezone: 'Asia/Shanghai' // 中国时区
     });
    
-    console.log('定时任务已设置，每天上午 10 点执行');
+    console.log('定时任务已设置，每天 2 点执行');
 };
 // setTimeout(() => {
 //     task();
