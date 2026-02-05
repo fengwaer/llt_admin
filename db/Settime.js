@@ -1,31 +1,27 @@
 const cron = require('node-cron');
 const db=require('./index');
 var fs = require("fs");
+const today = new Date();
+const todayStr = db.format('yyyy-MM-dd', today);
 
 const task = async () => {
     console.log('定时任务执行中，当前时间：', new Date().toLocaleString());
     const sql = `INSERT INTO wait (names, date) VALUES (?, ?)`;
-        const values = ['每天学习一个案例', '一定要记住哟。不记住就打屁股~'];
-        try{
-            await db.query(sql, values).then(re=>{
-                ctx.body={code:1,msg:'添加成功！'};
-            })
-        }catch(err){
-            ctx.body={code:0,msg:'添加失败！'+err};
-            console.log(err);
-        }
+    const values = ['每天学习一个案例。一定要记住哟。不记住就打屁股~',todayStr];
+    try{
+        await db.query(sql, values).then(re=>{ console.log('添加成功')})
+    }catch(err){
+        console.log('添加失败',err);
+    }
 };
 //测试用
 const test= async()=>{
     const sql = `INSERT INTO wait (names, date) VALUES (?, ?)`;
-        const values = ['每天学习一个案例', '一定要记住哟。不记住就打屁股~'];
+        const values = ['每天学习一个案例。一定要记住哟。不记住就打屁股~',todayStr];
         try{
-            await db.query(sql, values).then(re=>{
-                ctx.body={code:1,msg:'添加成功！'};
-            })
+            await db.query(sql, values).then(re=>{})
         }catch(err){
-            ctx.body={code:0,msg:'添加失败！'+err};
-            console.log(err);
+            console.log('添加失败',err);
         }
 console.log('开始执行')
 };
@@ -34,7 +30,7 @@ const schedule = () => {
         timezone: 'Asia/Shanghai' // 中国时区
     });
    
-    console.log('定时任务已设置，每天 2 点执行');
+    console.log('定时任务已设置，每天2点 点执行');
 };
 // setTimeout(() => {
 //     task();
