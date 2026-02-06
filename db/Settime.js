@@ -3,15 +3,21 @@ const db=require('./index');
 var fs = require("fs");
 const today = new Date();
 const todayStr = db.format('yyyy-MM-dd', today);
+const filePath = `./../public/msg.txt`;
 
 const task = async () => {
+    
     console.log('定时任务执行中，当前时间：', new Date().toLocaleString());
     const sql = `INSERT INTO wait (names, date) VALUES (?, ?)`;
     const values = ['每天学习一个案例。一定要记住哟。不记住就打屁股~',todayStr];
     try{
-        await db.query(sql, values).then(re=>{ console.log('添加成功')})
+        await db.query(sql, values).then(re=>{ 
+            let newContent = `${todayStr}写入失败${err}\n`;
+            fs.appendFile(filePath, newContent,(err) => {});
+        })
     }catch(err){
-        console.log('添加失败',err);
+        let newContent = `${todayStr}写入失败${err}\n`;
+        fs.appendFile(filePath, newContent,(err) => {});
     }
 };
 //测试用
