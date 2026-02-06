@@ -2,6 +2,8 @@
 
 
 node_modules/
+public/down/
+public/upload/
 db/index.js
 
 

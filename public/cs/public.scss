@@ -43,8 +43,9 @@ table{border-collapse: collapse;  width:100%;
 
 //圣诞节
 .crms{ position: fixed; z-index: 8;}
-.top_l{ left:0px; bottom: 0px; width:80px; transform: scaleX(-1);}
-.top_c{ left:0px; top: -5px; width:100%; height:75px; background: url('/public/img/bg_c.png') repeat-x; background-size:contain;}
+.top_l{ left:0px; top: 0px; width:80px; transform: scaleX(-1);}
+.bottom_l{ left:0px; bottom: 0px; width:80px; transform: scaleX(-1);}
+.top_c{ left:0px; top: -5px; width:100%; height:75px; background: url('/public/img/hf.png') no-repeat 50%; background-size:420px 60px;}
 .top_r{ right:-5px; top: -5px; width:80px; transform: scaleX(-1);}
 .bot_l{ left:0px; bottom: -5px; width:100px; transform: scaleY(-1);}
 .bot_r{ right:0px; bottom: -5px; width:150px; transform: scale(-1, -1);}
