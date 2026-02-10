@@ -5,6 +5,7 @@
     .win p{ margin-bottom:10px;}
     .bt3{ margin-right:10px;}
     .fn_1{ width:110px;}
+    .jiean{ margin-right: 100px;}
     .c3{ text-align:center; font-size: 12px; }
     /* .name i{color: #fff;} */
     #calendar{ display: none; position:fixed; top:0; left:0; width:100%; height:100%; background: #fff; z-index:22;}
@@ -48,7 +49,7 @@
         <p><b>资料位置：</b><input type="text" class="in" v-model="win.data.remake"></p> 
         <p><b>程序阶段：</b>
             <select class="in" v-model="win.data.stage" >
-                <option v-for='st of stage.arr' :value='st' v-text='st'></option>
+                <option v-for='st of stage.arr' v-if="st!='结案'" :value='st' v-text='st'></option>
             </select>
         </p>
         <p><b>开庭地址：</b><input type="text" class="in" v-model="win.data.addr"></p>
@@ -81,8 +82,9 @@
         
     </div>
     <p v-if=' win.data.Id'>
+        <i class="bt5 jiean" v-if="win.data.stage!='结案'" @click="end_date()">结案</i>
         <i class="bt1" @click="update()">确定修改</i>
-        <i class="bt5 fr" v-if="win.data.stage!='结案'" @click="end_date()">结案</i>
+        
     </p>
     <p v-else><i class="bt1" @click="add()">确定添加</i></p>
     </div>
@@ -261,7 +263,7 @@ var app = new Vue({
             this.sch.more=1;
             this.get();
         },
-        date_out(us) {
+        date_out(us) {//倒计时颜色警告
             let d = new Date(us.next_date),out;
             let now = new Date();
             let days = (d - now) / (1000 * 3600 * 24);

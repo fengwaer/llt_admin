@@ -6,11 +6,15 @@ let config = {
     password : 'root',
     database : 'llt_admin',
     port:33060,
+    debugger:true,
     multipleStatements: true//允许多条sql同时执行
 };
-let pool = mysql.createPool(config);
-let query = (sql, values) => {
+var pool;
+try{pool = mysql.createPool(config);}
+catch{}
 
+let query = (sql, values) => {
+    console.log(mysql.format(sql, values))
     return new Promise((resolve, reject) => {
         pool.getConnection((err,connection) => {
             if (err) {

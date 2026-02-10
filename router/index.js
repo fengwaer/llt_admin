@@ -19,6 +19,11 @@ const c_case_tj=require('../controls/base/case_tj');
 router.get('/case',c_case.get);
 router.get('/timeline',c_timeline.get);//时间线
 
+//统计
+const c_tj=require('../controls/base/case_tj');
+router.get('/tj',c_tj.get)
+
+
 //待办事项 
 const c_wait=require('../controls/base/wait');
 router.get('/wait',c_wait.get);

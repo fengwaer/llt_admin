@@ -1,0 +1,54 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ 
+ <style>
+    .chart1{ margin:0 auto;position:absolute;top:0px;left:10vw;z-index:7;}
+    .in{position: relative; z-index:20;}
+ </style>
+<script type="text/javascript" src="/public/js/echarts.min.js"></script> 
+ <div class="box">
+    <div id="app">
+        <input type="text" class="in" v-model="sch.date" @keyup.enter="get()" placeholder="2012-05">
+    </div>
+    <div class='chart1' id="chart1" style="width:60vw;height:80vh;"></div>
+</div>
+
+ <script type="text/javascript">
+const chart1= echarts.init(document.getElementById('chart1'));
+const opt1 = {
+    tooltip: { trigger: 'item' },
+    title: {text: '案件统计',left: 'center',top: 'center',},
+    series: [{type: 'pie',data:[],radius: ['40%', '70%'],}]
+};
+
+$(document).ready(e=>{
+    $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+    
+})
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{}},
+        sch:{get:1,date:ctl.format('yyyy')-1},
+       
+        
+    },
+    created(){
+        this.get();
+    },
+    methods:{
+        get: function(e) {
+        const _this = this; // 确保在 ajax 内部能访问到外部逻辑（如有需要）
+        $.ajax({url: '/tj',data: this.sch,success: function(res) {
+            let opt_data = res.msg.map(i => {return { value: i.num, name: i.stage+i.num };});
+            let total = res.msg.reduce((sum, item) => sum + Number(item.num), 0);
+            opt1.series[0].data = opt_data;
+            opt1.title.text='合计：'+total;
+            chart1.setOption(opt1, true);
+            }
+        });
+        },
+    }
+})
+</script>
+{{/block}}
