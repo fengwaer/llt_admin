@@ -31,7 +31,7 @@ const test= async()=>{
     console.log('开始执行')
 };
 const schedule = () => {
-    cron.schedule('0 7 * * *', task, {
+    cron.schedule('29 9 * * *', task, {
         timezone: 'Asia/Shanghai' // 中国时区
     });
    
