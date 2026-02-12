@@ -21,6 +21,7 @@
     data: {
         dt:'',
         code_a:'',
+        box:idx=0,
         win1:{is:true,dt:{}},
     },
     created(){

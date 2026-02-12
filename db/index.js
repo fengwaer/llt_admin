@@ -14,7 +14,7 @@ try{pool = mysql.createPool(config);}
 catch{}
 
 let query = (sql, values) => {
-    console.log(mysql.format(sql, values))
+    // console.log(mysql.format(sql, values))
     return new Promise((resolve, reject) => {
         pool.getConnection((err,connection) => {
             if (err) {

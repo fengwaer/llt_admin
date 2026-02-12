@@ -8,7 +8,7 @@
 <script type="text/javascript" src="/public/js/echarts.min.js"></script> 
  <div class="box">
     <div id="app">
-        <input type="text" class="in" v-model="sch.date" @keyup.enter="get()" placeholder="2012-05">
+        <input type="text" class="in" v-model="sch.date" @keyup.enter="get()" placeholder="2012-12">
     </div>
     <div class='chart1' id="chart1" style="width:60vw;height:80vh;"></div>
 </div>
@@ -29,7 +29,7 @@ var app = new Vue({
     el: '#app',
     data: {
         win:{is:0,data:{}},
-        sch:{get:1,date:ctl.format('yyyy')-1},
+        sch:{get:1,date:''},
        
         
     },

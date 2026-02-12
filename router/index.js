@@ -54,7 +54,7 @@ const ctl_index=require('../controls/public/index');
 const ctl_login=require('../controls/public/login');
 router.get('/404', ctl_404);//错误页
 router.get('/500', ctl_500);//服务器错误
-router.get('/', ctl_index);//首页
+router.get('/', c_tj.get);//首页
 router.get('/login', ctl_login);//登录
 //上传附件
 router.post("/upload", async ctx => {
