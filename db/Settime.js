@@ -35,7 +35,8 @@ const schedule = () => {
         timezone: 'Asia/Shanghai' // 中国时区
     });
    
-    console.log('定时任务已设置，每天2点 点执行');
+    let msg='定时任务已设置，每天定点执行';
+    fs.appendFile(filePath, msg,(err) => {});
 };
 // setTimeout(() => {
 //     task();
