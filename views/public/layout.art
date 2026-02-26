@@ -15,10 +15,10 @@
 <div id='win' v-cloak>
   <audio ref="audio" src="/public/lastCristmas.mp3" loop controls style=" display: none;"></audio>
   <!-- 圣诞节装饰 -->
-  <img class="crms top_l" src="/public/img/bg_top.png">
+  <!-- <img class="crms top_l" src="/public/img/bg_top.png"> -->
   <img class="crms bottom_l" src="/public/img/parser.png">
   <!-- <div class="crms top_c"></div> -->
-  <img class="crms top_r" src="/public/img/bg_top.png">
+  <!-- <img class="crms top_r" src="/public/img/bg_top.png"> -->
   <!-- end -->
    <div id="lottie"></div>
    <div class="tips" v-show="tips.is">

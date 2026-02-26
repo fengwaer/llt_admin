@@ -20,6 +20,7 @@ const jwt=require('jsonwebtoken');
 //定时任务
 const {schedule,test}=require('./db/Settime');
 schedule();
+// test()
 
 app.use(cors());
 app.use(koaBody({formLimit:'50mb',jsonLimit:'50mb',multipart: true,formidable:{uploadDir:'public/upload/',keepExtensions: true}}));
