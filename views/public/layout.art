@@ -16,7 +16,7 @@
   <audio ref="audio" src="/public/lastCristmas.mp3" loop controls style=" display: none;"></audio>
   <!-- 圣诞节装饰 -->
   <!-- <img class="crms top_l" src="/public/img/bg_top.png"> -->
-  <img class="crms bottom_l" src="/public/img/parser.png">
+  <img class="crms bottom_l" :class="{'rotate':rotate}" src="/public/img/parser.png" @click="ro_fn">
   <!-- <div class="crms top_c"></div> -->
   <!-- <img class="crms top_r" src="/public/img/bg_top.png"> -->
   <!-- end -->
@@ -30,7 +30,6 @@
   
 </div>
 <script type="text/javascript">
-
   // window.onload = function() {
   //   if(!localStorage.getItem('lot')){
   //   var lot=lottie.loadAnimation({
@@ -53,11 +52,17 @@
           tips:{is:0,msg:'我知道啦~'},
           wait:{is:0,msg:'还在处理中呢,稍等一下下哟~...'},
           wait_data:'',
+          rotate:true,
       },
       mounted(){
         window.addEventListener('keyup', this.keyup);
       },
       methods:{
+        ro_fn(){
+          this.rotate=this.rotate?false:true;
+          console.log(this.rotate)
+          // this.rotate
+        },
        get: function() {
           let _this = this;
           return $.ajax({
