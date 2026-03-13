@@ -5,7 +5,7 @@ node_modules/
 public/down/
 public/upload/
 db/index.js
-
+public/msg.txt
 
 # Executables
 public.css
