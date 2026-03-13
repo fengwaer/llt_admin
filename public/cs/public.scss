@@ -188,6 +188,7 @@ table{border-collapse: collapse;  width:100%;
    
   /* 当屏幕宽度大于或等于768像素时，改为浮动布局 */
   @media (max-width: 768px) {
+    .bottom_l{ left:0px; bottom:0; width:30px; transform: scaleX(-1);}
     .nav {width:40px; height:40px; background: none; margin: 0 auto;padding:0px;position: fixed;right:10px;bottom:10px; overflow: hidden; transition: all 0.5s; position: fixed; z-index:8;
       a{ display:flex; width:100%; height:40px; border-radius:30px; overflow: hidden; background: #444; padding:0px; }
       a{ align-items: center; justify-content: center; font-size:14px; text-align: center; font-weight: normal; margin-bottom:5px; position: relative;}
