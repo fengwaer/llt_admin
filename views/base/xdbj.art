@@ -8,7 +8,7 @@
     .c3{ text-align:center; font-size: 12px;}
  </style>
 <link href="/public/cs/quill.snow.css" rel="stylesheet">
- <div class="box mdgl" id="app">
+ <div class="box mdgl" id="app" v-clock>
     <div class="fn"><i class="bt2" @click="win.data={names:'',date:''},win.is=1">添加</i>
         <input v-model='sch.sch' class="in" type="text"  placeholder="输入..." @keyup.enter='sch.page=0;sch.more=1;get()'>
         <i class="bt1 sch" @click='sch.page=0;sch.more=1;get()'>搜索</i> 
