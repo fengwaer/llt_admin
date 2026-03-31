@@ -37,7 +37,7 @@ var app = new Vue({
                     let user=eval(res.user);
                     delete user.phone;delete user.pwd;
                     localStorage.setItem('user',JSON.stringify(user));
-                    location.href='/case'
+                    location.href='/'
                 }else{
                     ctl.tips_show('用户名或密码错误！');
                 }
