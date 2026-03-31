@@ -9,11 +9,12 @@ const get= async (ctx, next) => {
   const get=ctx.query.get;
   const data=ctx.query;
   if(get==1){
-     const sql = `SELECT stage, COUNT(*) AS num 
-      FROM cases
-      WHERE stage IN ('一审', '二审', '再审', '执行', '结案') 
-        AND start_date like ?
-      GROUP BY stage;`;
+    const sql = `SELECT stage, COUNT(*) AS num FROM cases
+    WHERE stage IN ('一审', '二审', '再审', '执行', '结案') AND start_date like ? GROUP BY stage;
+    SELECT * FROM cases WHERE DATE(next_date) = CURDATE();
+    SELECT * FROM cases WHERE next_date > CURDATE() ORDER BY next_date ASC LIMIT 3;
+    SELECT client FROM cases WHERE next_date >= CURDATE() AND next_date < DATE_ADD(CURDATE(), INTERVAL 15 DAY) ORDER BY next_date asc;
+    select * from wait where date(date)= curdate()`;
         const values = [`%${data.date}%`];
         try{
           await db.query(sql, values).then(re=>{

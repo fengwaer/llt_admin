@@ -2,15 +2,31 @@
  {{block 'content'}}
  
  <style>
-    .chart1{ margin:0 auto;position:absolute;top:0px;left:10vw;z-index:7;}
-    .in{position: relative; z-index:20;}
+    
+    
  </style>
 <script type="text/javascript" src="/public/js/echarts.min.js"></script> 
- <div class="box">
+ <div class="box tj_box">
     <div id="app">
+        <div class="info">
+            <div class="li tday" v-for="d of t_day"><p>
+                <b>今日开庭：</b>
+                <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
+                <a class="c2" :href="`https://ditu.amap.com/search?query= ${d.addr}`" target="_blank">[[d.addr]]</a>
+            </p></div>
+            <div class="li" v-for="d of day_3"><p>
+                <b>[[d.next_date?.substr(5,5)]]：</b>
+                <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
+                <a class="c2" :href="`https://ditu.amap.com/search?query= ${d.addr}`" target="_blank">[[d.addr]]</a> 开庭
+            </p></div>
+            <div class="li"><p><b>半月内：</b>有<i class="c3">[[day_s.length]]</i>个待开庭</p></div>
+        </div>
+        <div class="wait_box">
+            <p v-for="(d,idx) of wait">[[idx+1+'、'+d.names]]</p>
+        </div>
         <input type="text" class="in" v-model="sch.date" @keyup.enter="get()" placeholder="2012-12">
     </div>
-    <div class='chart1' id="chart1" style="width:60vw;height:80vh;"></div>
+    <div class='chart1' id="chart1"></div>
 </div>
 
  <script type="text/javascript">
@@ -18,7 +34,7 @@ const chart1= echarts.init(document.getElementById('chart1'));
 const opt1 = {
     tooltip: { trigger: 'item' },
     title: {text: '案件统计',left: 'center',top: 'center',},
-    series: [{type: 'pie',data:[],radius: ['40%', '70%'],}]
+    series: [{type: 'pie',data:[],radius: ['40%', '100%'],}]
 };
 
 $(document).ready(e=>{
@@ -27,10 +43,14 @@ $(document).ready(e=>{
 })
 var app = new Vue({
     el: '#app',
+    delimiters:["[[","]]"],
     data: {
         win:{is:0,data:{}},
         sch:{get:1,date:''},
-       
+        t_day:[],
+        day_3:[],
+        day_s:[],
+        wait:[],
         
     },
     created(){
@@ -38,16 +58,27 @@ var app = new Vue({
     },
     methods:{
         get: function(e) {
-        const _this = this; // 确保在 ajax 内部能访问到外部逻辑（如有需要）
+        var _this = this; // 确保在 ajax 内部能访问到外部逻辑（如有需要）
         $.ajax({url: '/tj',data: this.sch,success: function(res) {
-            let opt_data = res.msg.map(i => {return { value: i.num, name: i.stage+i.num };});
-            let total = res.msg.reduce((sum, item) => sum + Number(item.num), 0);
+            let opt_data = res.msg[0].map(i => {return { value: i.num, name: i.stage+i.num };});
+            let total = res.msg[0].reduce((sum, item) => sum + Number(item.num), 0);
             opt1.series[0].data = opt_data;
             opt1.title.text='合计：'+total;
             chart1.setOption(opt1, true);
+
+            _this.t_day=res.msg[1]
+            _this.day_3=res.msg[2]
+            _this.day_s=res.msg[3]
+            _this.wait=res.msg[4]
             }
         });
         },
+        // 纬度、经度、目的地名称
+         openMap(addr) {
+            // 苹果地图 / 高德地图 / 百度地图 通用跳转
+            const url = `https://ditu.amap.com/search?query=${encodeURIComponent(addr)}`;
+            window.open(url, "_blank");
+        }
     }
 })
 </script>

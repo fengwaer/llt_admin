@@ -18,7 +18,7 @@ body{background: #99C8C2;}
 .bt3{ display: inline-block; background: #f90; color: #fff; border-radius: 5px; padding:10px 10px; cursor: pointer;}
 .bt4{ display: inline-block; background: #e28; color: #fff; border-radius: 5px; padding:10px 10px; cursor: pointer;}
 .bt5{ display: inline-block; background: #c44; color: #fff; border-radius: 5px; padding:10px 10px; cursor: pointer;}
-.c3{ color: #e44 !important;}.c0{ color: #111 !important;}
+.c1{ color: #4c8 !important;}.c2{ color: #199 !important;}.c3{ color: #e44 !important;}.c0{ color: #111 !important;}
 .tl{ text-align: left;}.tr{text-align: right;}
 .fl{ float:left;}.fr{float: right;}
 .in{ display: inline-block; height: 34px; border-radius:5px; border:1px solid #666; padding:0px 5px; box-sizing: border-box;}
@@ -49,7 +49,7 @@ table{border-collapse: collapse;  width:100%;
 .top_r{ right:-5px; top: -5px; width:80px; transform: scaleX(-1);}
 .bot_l{ left:0px; bottom: -5px; width:100px; transform: scaleY(-1);}
 .bot_r{ right:0px; bottom: -5px; width:150px; transform: scale(-1, -1);}
-@keyframes spin {
+@keyframes spin {//函数
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
@@ -102,20 +102,21 @@ table{border-collapse: collapse;  width:100%;
     
 }
 
-//统计样式
-.mdtj{
-    .tab1{ width:100px; float:left; text-align: center; position: relative; z-index:10;
-        .li{background: #168; color: #fff; padding:8px; cursor: pointer; margin:1px 0px;
-            .in{ width:100%; box-sizing:border-box;}
+//统计概览
+.tj_box{
+    .info{margin:10px;
+        .li{ width:70%; margin-bottom:10px;
+            p{display:inline-block;background: #fff; border-radius:8px; padding:10px;}
         }
-        .li:hover{ background:#146;}
-        .li.is{ background:#146;}
+        .tday p{ background: #333; color:#fff;
+            
+        }
     }
-    .tab2{
-        .li{ display: inline-block;background: #1c8; color: #fff; padding:8px; cursor: pointer; margin:2px;}
-        .li:hover{ background:#168}
-        .li.is{ background:#333;}
+    .wait_box{  background: #fe6; display: inline-block; border-radius: 8px; margin:10px; padding:10px;
+        p{color: #333; font-size: 16px; margin-bottom:10px;}
     }
+    .in{ position:absolute; right:10px; top:10px;}
+    .chart1{ margin:0 auto;position:absolute;top:60px;;right:100px;z-index:7;width:480px;height:300px;}
 
 }
 //表单1
@@ -218,5 +219,23 @@ table{border-collapse: collapse;  width:100%;
     .win .box_2{
         b{ display: block; text-align: left; margin-bottom:5px; color: #666;}
         .in{ width:100%;}
+    }
+
+    //统计概览
+    .tj_box{ height: 100vh; position: relative;
+        .info{margin:10px;
+            .li{ width:100%; margin-bottom:10px;
+                p{display:inline-block;background: #fff; border-radius:8px; padding:10px;}
+            }
+            .tday p{ background: #333; color:#fff;
+                
+            }
+        }
+        .wait_box{  background: #fe6; display: inline-block; border-radius: 8px; margin:10px; padding:10px;
+            p{color: #333; font-size: 14px; margin-bottom:10px;}
+        }
+        .in{display: none;}
+        .chart1{ margin:0 auto;position:absolute;top:50vh;left:10vw;z-index:7;width:80vw;height:80vw; display: none;}
+
     }
   }
