@@ -12,12 +12,12 @@
             <div class="li tday" v-for="d of t_day"><p>
                 <b>今日开庭：</b>
                 <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
-                <a class="c2" :href="`https://ditu.amap.com/search?query= ${d.addr}`" target="_blank">[[d.addr]]</a>
+                <a class="c2" :href="`amapuri://route/plan/?dname=${encodeURIComponent(d.addr)}&dev=0&t=0`" target="_blank">[[d.addr]]</a>
             </p></div>
             <div class="li" v-for="d of day_3"><p>
                 <b>[[d.next_date?.substr(5,5)]]：</b>
                 <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
-                <a class="c2" :href="`https://ditu.amap.com/search?query= ${d.addr}`" target="_blank">[[d.addr]]</a> 开庭
+                <a class="c2" :href="`amapuri://route/plan/?dname=${encodeURIComponent(d.addr)}&dev=0&t=0`" target="_blank">[[d.addr]]</a> 开庭
             </p></div>
             <div class="li"><p><b>半月内：</b>有<i class="c3">[[day_s.length]]</i>个待开庭</p></div>
         </div>
