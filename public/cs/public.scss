@@ -1,3 +1,4 @@
+
 [v-cloak]{ display: none;}
 *{font-size: 14px; padding:0px; margin:0px; text-decoration: none; font-family: '微软雅黑'; font-style: normal; outline: none;}
 .hide,[v-clock]{ display: none !important;}
@@ -37,7 +38,7 @@ table{border-collapse: collapse;  width:100%;
     .on{ color:#0ff; font-weight: bold;}
     a,div{ display: block; padding:10px 10px 10px 0px; cursor: pointer;}
     a:hover{ color: #0ff;}
-    *{ color: #fff; font-size:16px; position:relative; z-index:20;}
+    *{ color: #fff; font-size:14px; position:relative; z-index:20;}
 }
 .tox-statusbar{ display: none !important;}//隐藏富文本logo
 
@@ -113,7 +114,7 @@ table{border-collapse: collapse;  width:100%;
         }
     }
     .wait_box{  background: #fe6; display: inline-block; border-radius: 8px; margin:10px; padding:10px;
-        p{color: #333; font-size: 16px; margin-bottom:10px;}
+        p{color: #333; font-size: 14px; margin-bottom:10px;}
     }
     .in{ position:absolute; right:10px; top:10px;}
     .chart1{ margin:0 auto;position:absolute;top:60px;;right:100px;z-index:7;width:480px;height:300px;}
@@ -191,12 +192,15 @@ table{border-collapse: collapse;  width:100%;
   @media (max-width: 768px) {
     .bottom_l{ left:0px; bottom:0; width:30px; transform: scaleX(-1);}
     .nav {width:40px; height:40px; background: none; margin: 0 auto;padding:0px;position: fixed;right:10px;bottom:10px; overflow: hidden; transition: all 0.5s; position: fixed; z-index:8;
-      a{ display:flex; width:100%; height:40px; border-radius:30px; overflow: hidden; background: #444; padding:0px; }
-      a{ align-items: center; justify-content: center; font-size:14px; text-align: center; font-weight: normal; margin-bottom:5px; position: relative;}
-      
+      a{ display:flex; width:100%; height:40px; border-radius:30px; overflow: hidden; background: #fff; padding:0px; }
+      a{ align-items: center; justify-content: center; font-size:12px; letter-spacing: 2px; text-align: center; font-weight: normal; margin-bottom:5px; position: relative;}
+      .ift{ color:#333;}
+      span{ display: none;}
+      a:hover{ color:#168;}
+      .on{ color: #168;}
       .pc{display: none;}
     }
-    #wait{ position: absolute; left: -5px; top:0px; width:100%; height: 100%; line-height:40px; opacity: 0.8;}
+    #wait{ position: absolute; left: -5px; top:0px; width:100%; height: 100%; line-height:40px;}
     .open{ transition:height 0.5s; height:220px; }
     .fn{
         .in{ width:30vw;}
@@ -239,3 +243,43 @@ table{border-collapse: collapse;  width:100%;
 
     }
   }
+
+  @font-face {
+    font-family: "ift"; /* Project id 5151787 */
+    src: 
+         url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAacAAsAAAAAC+wAAAZNAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHFQGYACDXgqKfIkQATYCJAMcCxAABCAFhCsHSxstCiMR5nNUJPsrjFtsQKKCC8SgLDhhU0AIynqnZb/LCFi7gAY7d6aFMgNMwVrwARIAAAAAIHie9sd37tx5+O99QXGhCqA5Q0lpnX5dssOeVVOeAJjntxlsDeiSWLRL2ZNFJy664dKHd71OvYz67fCfbr7Ty4rH0mxhCSzMAzr8x9+ogKIoXMLZ/t+5/AV5A9QZUenUzg5QIRR+cmmgfekfudvshBO7/5vv8xoNTLPCIZZhdOEdt8UWRSn2x/1KN8cXsJ59ANjssKXFoCSouIiyGj8rsRPVW8QzuNTJmXz4NgiQ0IsRMOMOz68ge0VOFsphuXQK+OmyQooc4rUCm0EQYnFYdFeL7CQAs93cBXbYvy+/6RdqYAiUy1Em8YMKLjrzo1gZz4C+xexAwPkGCAAFOgemki3Zhs3q8jptQSL9Tcs0gGxiDKEzrsb5uytX/5j3Plx9aRey1T94YFEMQkAIEoKCTMbPCobgjI7AgqtBoOBG8ckSTkMZgsJliCCAH8VCrio2WpwN1AO5AWY04AdPZ1BSAjKwWVmhDftCpgMiUnutiBLamoQNaAyqMcEyxBBKwWOssEUuPcrYNC5qcHbNMva41LZpiTmSQecVpBQWlxTlKtjxdMq95l57X1mP6Xc32oTR03IQ4mPN/WPGveZUhra6s+J1MXoWV8AeAWxOQARBSOln8aQB6RKjG9/LpSRhoN1hmKp7OSyxn5VL0YQ+JnfDzNpYkNK3NLeA4wPykWGsgktuUkbX3fG5bZm+6UauOJOvw3wW+ZQd0/WhfbC0zFaQxVKxfojT1e0FNu9DKwUHPTCCrQ6R3DuI1kEeyDCIWwRIWe7ZOpR/jk1jyhHA0lbLy9Ldw9pXIxa2J3OCWQF0DLImz18bPWXYfdnIoYtD0dwdVyLZJblswRUPvoaHJAdtFgWznNW8nUx/nD0OS9E+FKSZPqUcFk7mf31Mr/ce/ewA3DEtAfMGjwgQ7ph+dr98YQ7N4r0ucpimpaFFXT4nG5bjBdKbNsAcnpVhqYMV6p59IHs7L6NdIQRlIDhGm70Lav5xiSBL+yAoWfA+AkyKxtpotkfra0Vl7X2j+xcepPJtkGvEnwFYoa4RuJjIhN9k3aR7iNPcMzxu4/mm2ca9q2zS7bLLYqnN76ai/dhemgw0mtSO1U5yCZ1vjghEHiyNJaIrqgUxlnHpnmY1//MdQoAkxUISEArF5Ovfi+DK1TuNEqC6RW+ZLVBIppJoKF97RbAOCg4/RZnKR1QIafmStFD0yv21vdWhk/PSfWrkyBDgf5fnke3qmu2R90ajWlSve57Hm9h4VQskr6cSRKIEKukMU5m2lFGnmUsx3wFRFEq059ejRrNAqfeKM9R7T36wg789HKqmyMOIypMWI7GWWEo03MdbZSVBPDdPIAqfYlbNf3Y3u4FwBNxyA8uNJcaJJjKTcuJ8k6j14MFm/nqrKH3flI/hUmuciuusdS+8u6blZt9rzOPMer77feg5qRvAglG38qJOau890yTYD3zSLsgx4tnHObc/OYvERP9PsyVw1TiLMAv9klDrgRzGDyMj8GX8MkyWuPGExaMqCKeN0/p5ts7heOEZZ0+Vj1OlSMpLLviOkO6Nj+ajwDo3rm3bXCLC+Us7HHnAAX/6xNZxMyRM9ScDeYflMKugR+vPsmxt/iBzNgKAP6f3dDzgD+krnQ343/pZY/Bndb92g7+lB7QJ/FUd0mH/uHnM/v/9F+Z4/4/TX2HPtz+Rsu3+kKUZxj9GSGHG/0s4r2BTe3RCZKXGOoNCEWsg/dLpIFEt8Iey5ON9c6KCwj4QNMRcgSGiGBSlCm3xtRCQ0gAhSjckdKBv75QCzANFbAbQjNXAExLtQzBkMwRKyBG0xZ+CgGJc4IVKdAchYQY8OlxKsxhf23OYE1as+GaybCzXJpHkdIHiXefOpeGkG3SdbCxLoyQUPkKLLv+G7kNkRJxx1xh2WO1sqHXDWtfUWFI0JGoHccylF4nKxsCew5ywYsU3k2VjuUkkyRdfoHjXuYszUXeDB15H9KKpLI0SGX0ksFl1O8jtPkRGSseZ7nONYdFhlzrUHGhYK8+qsaRoWMHXDmJqxosKoqGLzMM4AiTA5Rkj0IiKlUBCiSQmKNBNh77Qocil9qvCL+qgQg0AAAAA') format('woff2'),
+         url('//at.alicdn.com/t/c/font_5151787_lgp5qgbd4ge.woff?t=1775009272563') format('woff');
+  }
+  
+  .ift {
+    font-family: "ift" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .ift-close:before {
+    content: "\e654";
+  }
+  
+  .ift-gl:before {
+    content: "\e640";
+  }
+  
+  .ift-gail:before {
+    content: "\e61f";
+  }
+  
+  .ift-db:before {
+    content: "\e602";
+  }
+  
+  .ift-bj:before {
+    content: "\e66a";
+  }
+  
+  .ift-del:before {
+    content: "\e816";
+  }
+  
