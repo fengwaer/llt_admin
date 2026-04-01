@@ -14,7 +14,7 @@
                 <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
                 <i class="c2" @click="gomap(d.addr)">[[d.addr]]</i>
             </p></div>
-            <div class="li" v-for="(d,idx) of day_3"><p :style="`background:`">
+            <div class="li" v-for="(d,idx) of day_3"><p :style="`background:rgba(255,255,150,${1-((idx+1) * 0.2)})`">
                 <b>[[d.next_date?.substr(5,5)]]：</b>
                 <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
                 <i class="c2" @click="gomap(d.addr)">[[d.court]]</i> 开庭
