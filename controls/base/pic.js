@@ -1,10 +1,12 @@
 const { log } = require('console');
 const db=require('../../db/index');
 var fs = require("fs");
+const fspr = require('fs').promises;
 const path = require('path');
 const pdf = require('pdf-poppler');
 const archiver = require('archiver');
 const convert = require('images-to-pdf');
+const sharp=require('sharp');
 
 
 
@@ -21,8 +23,6 @@ const get= async (ctx, next) => {
     }catch{
       ctx.body={msg:'删除失败！'}
     }
-    
-
   }else{
     await ctx.render('base/pic', {title,img_list})
   }
@@ -31,14 +31,26 @@ const get= async (ctx, next) => {
 
 // 筛选出图片文件
 async function get_img(){
-  const folderPath = 'public/upload/'; // 替换为图片文件夹路径
+  const folderPath = 'public/upload/pic_img/' ; // 替换为图片文件夹路径
+
+  if (!fs.existsSync(folderPath)) {fs.mkdirSync(folderPath);}
   // 获取文件夹中的所有文件
   const files = fs.readdirSync(folderPath);
+  var src_img=[];
   const imageExtensions = ['.jpg', '.jpeg', '.png'];
   let images = files.filter(file => {
       const ext = path.extname(file).toLowerCase();
       return imageExtensions.includes(ext);
   }).map(file => path.join(folderPath, file));
+  for(let img of images){
+    const ab_path=path.resolve(__dirname,'../../'+img);
+    try {
+        const buffer = await sharp(ab_path).resize(2480, 3508, {fit: 'contain',background: '#fff'}).toBuffer();
+        await fspr.writeFile(ab_path, buffer);
+    } catch (err) {
+        // console.error(`处理图片 ${img} 时出错:`, err);
+    }
+  }
   return images;
 }
 //pdf转图片
@@ -54,12 +66,7 @@ const post = async (ctx, next) => {
     }
 
     // 转换PDF为图片
-    let opts = {
-      format: 'jpeg',
-      out_dir: imagesDir,
-      out_prefix: 'img_',
-      page: null,
-    };
+    let opts = {format: 'jpeg',out_dir: imagesDir,out_prefix: 'img_',page: null};
 
     await pdf.convert(file, opts); // 使用 await 等待转换完成
 
@@ -93,25 +100,46 @@ const post = async (ctx, next) => {
   }
 };
 
-//图片转pdf
-const topdf=(ctx,next)=>{
+//图片转pdf和调整顺序
+const topdf=async (ctx,next)=>{
   let img_path=ctx.request.body?.img_path;
-  if(!img_path){ctx.body={msg:'请上传图片'}; return;}
+  const get=ctx.request.body.get;
+  if(get==1){//生成pdf
+    if(!img_path){ctx.body={msg:'请上传文件'}; return;}
 
-  async function convertImagesToPDF(folderPath, outputFilePath) {
-    try {
-        // 将图片合并为PDF
-        await convert(img_path, outputFilePath);
-        ctx.body={msg:'PDF文件已生成',file:outputFilePath};
-        //删除上传的图片
-        img_path.forEach(i=>{fs.unlinkSync(i);})
-    } catch (error) {
-        ctx.body={msg:'生成PDF时出错：'+error};
+    async function convertImagesToPDF(folderPath, outputFilePath) {
+      try {
+          // 将图片合并为PDF
+          await convert(img_path, outputFilePath);
+          ctx.body={msg:'PDF文件已生成',file:outputFilePath};
+          //删除上传的图片
+          img_path.forEach(i=>{fs.unlinkSync(i);})
+      } catch (error) {
+          ctx.body={msg:'生成PDF时出错：'+error};
+      }
     }
-}
+    const outputFilePath = 'public/down/img_pdf.pdf'; // 输出的PDF文件路径
+    convertImagesToPDF(img_path, outputFilePath);
 
-const outputFilePath = 'public/down/img_pdf.pdf'; // 输出的PDF文件路径
-convertImagesToPDF(img_path, outputFilePath);
+  }else if(get==2){//pdf导出图片pic_img
+    try {
+      const file = ctx.request.files.file.filepath;
+      const imagesDir = path.join('./public/upload/pic_img/');
+      // 确保临时图片目录存在
+      if (!fs.existsSync(imagesDir)) {fs.mkdirSync(imagesDir);}
+      // 转换PDF为图片
+      let opts = {format: 'jpeg',out_dir: imagesDir,out_prefix: 'img_',page: null};
+      await pdf.convert(file, opts); // 使用 await 等待转换完成
+      //删除原文件
+      fs.unlinkSync(file)
+      ctx.body = { msg: '导出成功！'};
+    } catch (error) {
+      console.error(error);
+      ctx.body = { msg: '导出失败' + error };
+    }
+    
+    
+  }
 }
 
 module.exports={

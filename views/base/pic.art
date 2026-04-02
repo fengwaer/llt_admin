@@ -1,20 +1,15 @@
 {{extend 'public/layout' }}
  {{block 'content'}}
  
- <style>
+ <style >
     .bg1{ background:#398;}
-    .img_ul{ width:600px; overflow:auto; white-space: nowrap;}
-    .img_ul .li{ display:inline-block; position:relative;}
-    .img_ul .li .del{ position:absolute; right:0px; top:0px;}
-    .img_ul .li p{ text-align:center;}
-    .img_ul .li img{max-width:200px; max-height:200px;}
     .tl,.tr{ display:inline-block; width:50%; cursor:pointer; text-align:center; line-height:30px;}
  </style>
  <script type="text/javascript" src="/public/js/pic.js"></script>
  <div class="box pic">
     <div id="app">
         <div class='tab_1'>
-            <div class='li' :class="{is:box.idx==i}" v-for='(n,i) of box.arr' @click='box.idx=i' v-text='n'></div>
+            <div class='li' :class="{is:box.idx==i}" v-for='(n,i) of box.arr' @click='box.idx=i,tab(i)' v-text='n'></div>
         </div>
         <div class='tab_box' v-show="box.idx==0">
             <div class='size'>
@@ -38,9 +33,11 @@
         </div>
         <div class='tab_box' v-show="box.idx==2">
             <div class='img_ul'>
-                <div class='li' v-for='(src,i) of img_list'>
-                    <img :src='src' /><i class='bt0 del' @click="del_img(src,i)">删除</i>
-                    <p><i class='tl' @click='img_list.move(i,i-1)'>←</i><i class='tr' @click='img_list.move(i,i+1)'>→</i></p>
+                <div class='li' v-for='(src, i) of img_list' :key="src" draggable="true"
+                    @dragstart="handleDragStart(i)" @dragover.prevent 
+                    @dragenter="handleDragEnter(i)" @dragend="handleDragEnd">
+                    <img :src='src' />
+                    <i class='bt0 del' @click="del_img(src, i)">删除</i>
                 </div>
             </div>
             <div class='up_box'>
@@ -70,10 +67,12 @@ var app = new Vue({
         out_height:150,
         box:{idx:0,arr:['调整图片尺寸','PDF转图片','图片转PDF']},
         img_list:'',
+        dragIndex: null 
         
         
     },
     created(){
+        this.box.idx=ctl.cache_fn('tab_idx');
         function codes(input) {
             const textarea = document.createElement('textarea');
             textarea.innerHTML = input;
@@ -92,13 +91,26 @@ var app = new Vue({
         //上传图片
         up_img:function(e){
             const file=e.target.files
-            let formData = new FormData();
-            for (let i = 0; i < file.length; i++) {formData.append("files", file[i]);}
-             $.ajax({url:'/upload',type:'post' ,data:formData,contentType:false,processData:false,success:function(re){
-                ctl.tips_show(re.msg+'上传成功!');
-                location.reload();
-            }})
+            var formData = new FormData();
+            // 判断类型
+            if (file[0].type.startsWith('image/')) {
+                formData.append('path','/pic_img/')
+                for (let i = 0; i < file.length; i++) {formData.append("file", file[i]);}
+                $.ajax({url:'/upload',type:'post' ,data:formData,contentType:false,processData:false,success:function(re){
+                    ctl.tips_show(re.msg+'上传成功!');
+                    location.reload();
+                }})
+            } else if (file[0].type === 'application/pdf') {
+                formData.append('get',2)
+                formData.append('file',file[0])
+                $.ajax({url:'/pic_pdf',type:'post' ,data:formData,contentType:false,processData:false,success:function(re){
+                    location.reload();
+                    }
+                })
+            }
+           
         },
+        tab(idx){ctl.cache_fn('tab_idx',idx)},//储存选项卡位置
         //删除已上传的图片
         del_img(file,idx){
             let _this=this;
@@ -110,7 +122,7 @@ var app = new Vue({
         //图片转pdf
         to_pdf:function(e){
             let _this = this;
-            $.ajax({url:'/pic_pdf',type:'post' ,data:{img_path:this.img_list},success:function(re){
+            $.ajax({url:'/pic_pdf',type:'post' ,data:{get:1,img_path:this.img_list},success:function(re){
                 if(re.file){
                     ctl.tips_show(re.msg+'准备下载...');
                     _this.down('img_pdf.pdf',re.file)
@@ -171,6 +183,21 @@ var app = new Vue({
             downloadLink.click();
             // 从文档中移除临时的 <a> 元素
             document.body.removeChild(downloadLink);
+        },
+        //后面是拖拽控制
+        handleDragStart(index) {
+            this.dragIndex = index;
+        },
+        handleDragEnter(index) {
+            // 当拖拽元素进入另一个元素上方时，交换位置
+            if (this.dragIndex !== index) {
+                const movingItem = this.img_list.splice(this.dragIndex, 1)[0];
+                this.img_list.splice(index, 0, movingItem);
+                this.dragIndex = index; // 更新当前索引，保证连续滑动的平滑
+            }
+        },
+        handleDragEnd() {
+            this.dragIndex = null;
         },
     }
 })

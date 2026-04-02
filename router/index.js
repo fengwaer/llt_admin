@@ -1,6 +1,6 @@
 const Koart = require('koa-router');
 const fs = require("fs");
-// const upload=require('../controls/public/upload');
+const db=require('../db/index');
 var sktport=[];
 //初始化路由
 const router = new Koart();
@@ -56,22 +56,9 @@ router.get('/404', ctl_404);//错误页
 router.get('/500', ctl_500);//服务器错误
 router.get('/', c_tj.get);//首页
 router.get('/login', ctl_login);//登录
+
 //上传附件
-router.post("/upload", async ctx => {
-  const files = ctx.request.files;
-  if (files.files) {
-    // 文件信息
-    ctx.body = { msg: '多文件上传成功', file: files.files };
-  } else if(files.file) {
-    // 文件信息
-    ctx.body = { msg: '单文件上传成功', file: files.file};
-  }else{
-      ctx.body = { msg: '未上传文件' };
-  }
-});
-
-
-
+router.post("/upload",db.upload);
 
 
 module.exports= function(app){

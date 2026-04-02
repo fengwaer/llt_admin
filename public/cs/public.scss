@@ -59,7 +59,7 @@ table{border-collapse: collapse;  width:100%;
 
 
 //通用
-.tab_1{ margin:20px; border-radius: 5px; overflow: hidden; display: inline-block;border:1px solid #ccc;
+.tab_1{ margin:20px; background: #eee; border-radius: 5px; overflow: hidden; display: inline-block;border:1px solid #ccc;
     .li{ display: inline-block; padding:10px; cursor: pointer;}
     .li.is{ background: #146; color: #fff;}
 }
@@ -109,9 +109,7 @@ table{border-collapse: collapse;  width:100%;
         .li{ width:70%; margin-bottom:10px;
             p{display:inline-block;background: #fff; border-radius:8px; padding:10px;}
         }
-        .tday p{ background: #333; color:#fff;
-            
-        }
+        .tday p{ background: #111; color:#fff;  }
     }
     .wait_box{  background: #fe6; display: inline-block; border-radius: 8px; margin:10px; padding:10px;
         p{color: #333; font-size: 14px; margin-bottom:10px;}
@@ -130,6 +128,12 @@ table{border-collapse: collapse;  width:100%;
 }
 //图片处理
 .pic{
+    .img_ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; padding: 10px;
+        .li { position: relative; border: 1px solid #eee; background: #f9f9f9; cursor: move; transition: all 0.2s ease; user-select: none;
+          &:active { opacity: 0.5; border: 1px dashed #409eff; }
+          img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; pointer-events: none; }
+        }
+    }
     .size{ margin:20px;
         .in{ border:1px solid #999; border-radius:5px;}
     }
@@ -137,7 +141,7 @@ table{border-collapse: collapse;  width:100%;
     
 }
 //正方形上传按钮
-.up_box{ margin:20px; min-width: 100px; min-height:100px; background: #eff; border-radius:10px; box-shadow:0px 0px 3px #000; text-align: center; position: relative; color: #fff; display: inline-block; overflow: hidden; cursor: pointer;
+.up_box{ margin:20px; min-width: 100px; min-height:100px; background: #eff; border-radius:10px; box-shadow:0px 0px 3px #000; text-align: center; position: relative; color: #333; display: inline-block; overflow: hidden; cursor: pointer;
     p{ position: absolute;left:0px; top:0px;text-align: center;width:95%; height:95%; line-height:26px; z-index:1; display: flex; align-items: center; justify-content: center;}
     img{ width:400px; position: relative; z-index: 2;}
     input{ width:100%; height:100%; opacity:0; position: absolute; left:0px; top:0px; z-index:3;}
