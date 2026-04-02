@@ -43,6 +43,7 @@ app.use(async (req,next)=>{//检测登陆状态
     if(req.request.url.indexOf(sql)>=0){is=false; return;}
   })
   const path_s = ['/login', '/zlsj_det', '/5', '/api/notify_url'];
+
   if(!path_s.some(path => req.request.url.includes(path))){
       if(!isToken(cookie)){
         if(req.request.url.indexOf('/login')<0)
@@ -51,6 +52,10 @@ app.use(async (req,next)=>{//检测登陆状态
   }
   if(is==true){await next();}
 })
+app.on('error', (err, ctx) => {
+  if (err.code === 'ECONNRESET'||err.code==='ECANCELED') return;
+  console.error('Server Error:', err);
+});
 router(app);//路由
 
 

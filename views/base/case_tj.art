@@ -9,8 +9,13 @@
  <div class="box tj_box">
     <div id="app">
         <div class="info">
-            <div class="li tday" v-for="d of t_day"><p>
+            <div class="li tday" v-if="t_day.length>0" v-for="d of t_day"><p>
                 <b>今日开庭：</b>
+                <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
+                <i class="c2" @click="gomap(d.addr)">[[d.addr]]</i>
+            </p></div>
+            <div class="li tday" v-if="t_day.length==0" v-for="d of tm_day"><p>
+                <b>明日开庭：</b>
                 <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
                 <i class="c2" @click="gomap(d.addr)">[[d.addr]]</i>
             </p></div>
@@ -48,6 +53,7 @@ var app = new Vue({
         win:{is:0,data:{}},
         sch:{get:1,date:''},
         t_day:[],
+        tm_day:[],
         day_3:[],
         day_s:[],
         wait:[],
@@ -67,9 +73,10 @@ var app = new Vue({
             chart1.setOption(opt1, true);
 
             _this.t_day=res.msg[1]
-            _this.day_3=res.msg[2]
-            _this.day_s=res.msg[3]
-            _this.wait=res.msg[4]
+            _this.tm_day=res.msg[2]
+            _this.day_3=res.msg[3]
+            _this.day_s=res.msg[4]
+            _this.wait=res.msg[5]
             }
         });
         },

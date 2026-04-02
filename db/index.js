@@ -1,5 +1,7 @@
 var mysql = require('mysql');
 const fs = require('fs')
+const path = require('path');
+const sharp = require('sharp')
 let config = {
     host     : '192.168.2.21',
     user     : 'root',
@@ -57,6 +59,31 @@ const format = function(fmt,times) {
       if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
 }
+// 上传文件
+const upload = async (ctx, next) => {
+    const up_path = `/public/upload/`;
+    let dy = ctx.request.body;
+    const file = ctx.request.files.file;
+    const dir = path.resolve(__dirname, `../${up_path}${dy.path}/`);
+    
+    const webPath = dy.path.replace(/\\/g, '/');
+    if (!fs.existsSync(dir)) {fs.mkdirSync(dir, { recursive: true });}
+
+    if(ctx.request.files.file.length){
+      let re_path=[];
+      for(let i of file){
+        await sharp(i.filepath).resize({width: 1080,withoutEnlargement: true }).jpeg({ quality: 80 }).toFile(`${dir}/${i.newFilename}`);
+        await fs.promises.unlink(i.filepath);//删除
+        re_path.push(`/upload/${webPath}/${i.newFilename}`.replace(/\/+/g, '/'))
+        ctx.body = {code: 1,arr:1,path:re_path };
+      }
+    }else{
+      await sharp(file.filepath).resize({width: 1080,withoutEnlargement: true }).jpeg({ quality: 80 }).toFile(`${dir}/${file.newFilename}`);//处理并复制
+      // await fs.promises.copyFile(file.filepath,  );//复制
+      await fs.promises.unlink(file.filepath);//删除
+      ctx.body = {code: 1,path: `${up_path}${webPath}/${file.newFilename}`.replace(/\/+/g, '/')};
+    }
+  };
 module.exports = {
-    query,del,format
+    query,del,format,upload
 }

@@ -1,7 +1,7 @@
 <div class="nav">
 <a class='come' >欢迎：</a>
 <a href="/case"><i class="ift ift-gl"></i><span> 案件管理</span></a>
-<a href="/tj"><i class="ift ift-gail"></i><span> 案件统计</span></a>
+<a href="/tj"><i class="ift ift-gail"></i><span> 系统概览</span></a>
  <a href="/wait"><i class="ift ift-db"></i><span> 待办事项</span><i id="wait"></i></a>
  <a id="user" href="/xdbj"><i class="ift ift-bj"></i><span> 心得笔记</span></a>
 <a class="pc" href="/zlsj">资料收集</a>
