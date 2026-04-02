@@ -128,7 +128,7 @@ table{border-collapse: collapse;  width:100%;
 }
 //图片处理
 .pic{
-    .img_ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 10px;
+    .img_ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; padding: 10px;
         .li { position: relative; border: 1px solid #eee; background: #f9f9f9; cursor: move; transition: all 0.2s ease; user-select: none;
           &:active { opacity: 0.5; border: 1px dashed #409eff; }
           img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; pointer-events: none; }
