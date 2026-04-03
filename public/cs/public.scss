@@ -78,7 +78,7 @@ table{border-collapse: collapse;  width:100%;
 
 //表格样式
 .mdgl{ 
-    .table{ height:calc(100vh - 55px); min-width:60%; overflow:auto; position: relative;
+    .table{ height:calc(100vh - 65px); min-width:60%; overflow:auto; position: relative;
         thead{ position:sticky; top:0px;}
         .now{ background: #346 !important;}
         .now *{color: #fff;}
@@ -93,6 +93,10 @@ table{border-collapse: collapse;  width:100%;
 }
 //时间线
 .case_name{ display:inline-block;  margin:10px 0px; background: #Efefef; border-radius:8px; box-shadow: inset 0 0 5px #eee; padding:8px 10px;}
+.timeline{
+    .t1{width:80px;}
+    .t3{width:100px;}
+}
 
 //心得笔记
 .xdbj{display:grid;gap:10px;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); padding:5px;
@@ -213,7 +217,7 @@ table{border-collapse: collapse;  width:100%;
     }
     .mdgl{
         .table{ height: calc(100vh - 80px);}
-        table{ width:100%;
+        .case{ width:100%;
             td{ padding:5px;
                 i{ display: block; width: calc(20vw - 10px); height: 55px; overflow: hidden; text-overflow: ellipsis;} 
              }
@@ -229,7 +233,10 @@ table{border-collapse: collapse;  width:100%;
         b{ display: block; text-align: left; margin-bottom:5px; color: #666;}
         .in{ width:100%;}
     }
-
+    .timeline{
+        .t1{width:40px;}
+        .t3{width:40px;}
+    }
     //统计概览
     .tj_box{ height: 100vh; position: relative;
         .info{margin:10px;

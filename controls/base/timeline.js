@@ -13,7 +13,7 @@ const get= async (ctx, next) => {
         select * from cases where Id='${data.case_id}';
         SELECT * FROM timeline WHERE case_id='${data.case_id}' and
         event LIKE '%${data.sch}%' 
-        ORDER BY date ASC `
+        ORDER BY date DESC `
     await db.query(sql).then(results => {
         const res = results;
         res[1].map(i => {

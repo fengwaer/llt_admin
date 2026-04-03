@@ -22,7 +22,7 @@
         <b v-text='data.length'></b>
         <i class="bt3 rotate" @click='ctl.play'>M</i> 
     </div>
-    <div class="table"  v-clock>
+    <div class="table case" v-clock>
         <table>
             <thead><td width='30%'>案件</td><td>案号</td><td v-text="sch.stage=='结案'?'结案日期':'开庭日期'"></td><td>开庭地址</td><td>程序阶段</td><td>委托人</td><td>诉讼地位</td></thead>
             <tbody>
