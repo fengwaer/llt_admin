@@ -58,12 +58,12 @@ const post = async (ctx, next) => {
   try {
     const file = ctx.request.files.file.filepath;
     const imagesDir = path.join('./public/temp-images/');
-    const zipPath = path.join('./public/down', 'images.zip');
+    const zipPath = path.join('./public/down/', 'images.zip');
+    const downpath=path.join('./public/down/');
 
     // 确保临时图片目录存在
-    if (!fs.existsSync(imagesDir)) {
-      fs.mkdirSync(imagesDir);
-    }
+    if (!fs.existsSync(imagesDir)) {fs.mkdirSync(imagesDir);}
+    if (!fs.existsSync(downpath)) {fs.mkdirSync(downpath);}
 
     // 转换PDF为图片
     let opts = {format: 'jpeg',out_dir: imagesDir,out_prefix: 'img_',page: null};
