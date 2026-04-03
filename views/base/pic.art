@@ -34,9 +34,9 @@
         <div class='tab_box' v-show="box.idx==2">
             <div class='img_ul'>
                 <div class='li' v-for='(src, i) of img_list' :key="src" draggable="true"
-                    @dragstart="handleDragStart(i)" @dragover.prevent 
+                    @dragstart="handleDragStart(i)" @dragover.prevent @click="ctl.show_img(src)"
                     @dragenter="handleDragEnter(i)" @dragend="handleDragEnd">
-                    <img :src='src' />
+                    <img :src='src'/>
                     <i class='bt0 del' @click="del_img(src, i)">删除</i>
                 </div>
             </div>
@@ -81,11 +81,6 @@ var app = new Vue({
         let a=codes('{{img_list}}');
         a = a.replace(/\\/g, '\\\\');
         this.img_list=JSON.parse(a);
-        
-        //移动位置
-         Array.prototype.move = function (fromIndex, toIndex) {
-            this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
-        };
     },
     methods:{
         //上传图片

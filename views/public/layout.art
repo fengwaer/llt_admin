@@ -24,8 +24,9 @@
    <div class="tips" v-show="tips.is">
       <p class='msg' v-text='tips.msg'></p>
   </div>
-  <div class='wait' v-show='wait.is'>
-    <p class='msg' v-text='wait.msg'></p>
+  <!-- 等待 -->
+  <div class='wait' v-show='wait.is' @wheel.prevent="wheel">
+    <div class='msg' :style="{width:wait.width+'%'}" v-html='wait.msg' @click="wait.is=0"></div>
   </div>
   
 </div>
@@ -50,7 +51,7 @@
       el: '#win',
       data: {
           tips:{is:0,msg:'我知道啦~'},
-          wait:{is:0,msg:'还在处理中呢,稍等一下下哟~...'},
+          wait:{is:0,msg:'还在处理中呢,稍等一下下哟~...',width:50},
           wait_data:'',
           rotate:true,
       },
@@ -190,6 +191,17 @@
         cache_fn(key,data) { 
             if(data){localStorage.setItem(key, JSON.stringify(data));}
             else{return JSON.parse(localStorage.getItem(key));}
+        },
+        //查看照片
+        show_img(img){
+          console.log(img)
+            this.wait.msg=`<img class='big_img' src='${img}' />`
+            this.wait.is=1;
+        },
+        //放大照片
+        wheel(e){
+          if(e.deltaY>0){if(this.wait.width>10){this.wait.width-=10}}
+          else{if(this.wait.width<100){this.wait.width+=10}}
         },
         golink:function(url){//跳转
           window.open(url)

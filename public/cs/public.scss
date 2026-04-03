@@ -184,6 +184,7 @@ table{border-collapse: collapse;  width:100%;
     .msg{padding: 5px 20px; background:rgba(245,100,100, 0.8); color: #fff; box-shadow:0px 0px 3px#333; display: inline-block;}
 }
 .wait{ position: fixed; left:0px; top:0px; height:100%; width:100%; text-align: center; z-index:99; background:rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+    .big_img{ width:100%;}
     .msg{ background: #fff; border-radius:10px; width: 50%; height: 30vh; display: flex; justify-content: center; align-items: center;}
 }
 #wait{ display:inline-block; width:16px; height: 16px; background: #F44; color: #fff; border-radius:16px; text-align: center; font-size: 12px; margin-left:5px;}
