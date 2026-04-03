@@ -7,6 +7,7 @@ const pdf = require('pdf-poppler');
 const archiver = require('archiver');
 const convert = require('images-to-pdf');
 const sharp=require('sharp');
+sharp.cache(false);
 
 
 
@@ -17,16 +18,14 @@ const get= async (ctx, next) => {
   const data=ctx.query;
   const year =ctx.query.year;
   if(get==1){
-    try {
-      fs.unlinkSync(data.file);
-      ctx.body={msg:'删除成功！'}
-    }catch{
-      ctx.body={msg:'删除失败！'}
-    }
+    const ph=path.join(__dirname,`../../${data.file}`)
+    const res= await db.del(ph)
+    if(res===1){ctx.body={msg:'删除成功！'}}
+    else{ctx.body={msg:'删除失败！'}}
+
   }else{
     await ctx.render('base/pic', {title,img_list})
   }
-  
 }
 
 // 筛选出图片文件
@@ -44,11 +43,12 @@ async function get_img(){
   }).map(file => path.join(folderPath, file));
   for(let img of images){
     const ab_path=path.resolve(__dirname,'../../'+img);
+    const inputBuffer = await fspr.readFile(ab_path);
     try {
-        const buffer = await sharp(ab_path).resize(2480, 3508, {fit: 'contain',background: '#fff'}).toBuffer();
+        const buffer = await sharp(inputBuffer).resize(1240, 1754, {fit: 'contain',background: '#fff'}).toBuffer();
         await fspr.writeFile(ab_path, buffer);
     } catch (err) {
-        // console.error(`处理图片 ${img} 时出错:`, err);
+        console.error(`处理图片 ${img} 时出错:`, err);
     }
   }
   return images;

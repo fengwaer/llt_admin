@@ -114,9 +114,9 @@ var app = new Vue({
         //删除已上传的图片
         del_img(file,idx){
             let _this=this;
+            _this.img_list.splice(idx,1);
             $.ajax({url:'/pic',data:{get:1,file:file},success:function(re){
-                ctl.tips_show(re.msg+'删除成功...');
-                _this.img_list.splice(idx,1);
+                console.log(re)
             }})
         },
         //图片转pdf

@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 const fs = require('fs')
+const fspr = require('fs').promises;
 const path = require('path');
 const sharp = require('sharp')
 let config = {
@@ -35,11 +36,10 @@ let query = (sql, values) => {
     })
 };
 //删除文件
-const del=function(name){
-  fs.unlink(name,function(res){
-    return res;
-  })
-}
+const del = async function(path) {
+    try {await fspr.unlink(path); return 1; }
+    catch (err) {return err; }
+};
 //获取与格式时间
 const format = function(fmt,times) {
     var time = new Date(times);
@@ -75,12 +75,14 @@ const upload = async (ctx, next) => {
         await sharp(i.filepath).resize({width: 1080,withoutEnlargement: true }).jpeg({ quality: 80 }).toFile(`${dir}/${i.newFilename}`);
         await fs.promises.unlink(i.filepath);//删除
         re_path.push(`/upload/${webPath}/${i.newFilename}`.replace(/\/+/g, '/'))
+        sharp.cache(false);
         ctx.body = {code: 1,arr:1,path:re_path };
       }
     }else{
       await sharp(file.filepath).resize({width: 1080,withoutEnlargement: true }).jpeg({ quality: 80 }).toFile(`${dir}/${file.newFilename}`);//处理并复制
       // await fs.promises.copyFile(file.filepath,  );//复制
       await fs.promises.unlink(file.filepath);//删除
+      sharp.cache(false);
       ctx.body = {code: 1,path: `${up_path}${webPath}/${file.newFilename}`.replace(/\/+/g, '/')};
     }
   };
