@@ -24,9 +24,9 @@
                 <i class="c3">[[d.client]] </i>[[d.stage+'在 ']]
                 <i class="c2" @click="gomap(d.addr)">[[d.court]]</i> 开庭
             </p></div>
-            <div class="li"><p><b>半月内：</b>有<i class="c3">[[day_s.length]]</i>个待开庭</p></div>
+            <div class="li" @click="ctl.golink('/case')"><p><b>半月内：</b>有<i class="c3">[[day_s.length]]</i>个待开庭</p></div>
         </div>
-        <div class="wait_box">
+        <div class="wait_box" @click="ctl.golink('/wait')">
             <p v-for="(d,idx) of wait">[[idx+1+'、'+d.names]]</p>
         </div>
         <input type="text" class="in" v-model="sch.date" @keyup.enter="get()" placeholder="2012-12">
