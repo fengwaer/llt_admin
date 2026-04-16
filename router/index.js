@@ -46,6 +46,7 @@ const c_pic=require('../controls/base/pic');
 router.get('/pic',c_pic.get);
 router.post('/pic',c_pic.post);
 router.post('/pic_pdf',c_pic.topdf);
+router.post('/toico',c_pic.toico);
 
 //公共路由
 const ctl_404=require('../controls/public/404');

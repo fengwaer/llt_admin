@@ -5,7 +5,7 @@
  <a href="/wait"><i class="ift ift-db"></i><span> 待办事项</span><i id="wait"></i></a>
  <a id="user" href="/xdbj"><i class="ift ift-bj"></i><span> 心得笔记</span></a>
 <a class="pc" href="/zlsj">资料收集</a>
-<a class="pc" href="/pic">PDF与图片</a>
+<a class="pc" href="/pic">扩展</a>
 <!-- <a id="user" href="/user/index">用户管理</a> -->
 <a href="/login?out=1" class="out">退出</a> 
 </div>

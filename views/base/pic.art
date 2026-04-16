@@ -48,7 +48,12 @@
             <p>开始转换</p>
             </div>
         </div>
-        
+        <div class='tab_box' v-show="box.idx==3">
+            <div class='up_box'>
+                <p>上传PNG</p>
+                <input type="file" @change='toico' accept="image/*" multiple />
+            </div>
+        </div>
     </div>
 </div>
 
@@ -65,7 +70,7 @@ var app = new Vue({
         img_src:'',
         out_width:200,
         out_height:150,
-        box:{idx:0,arr:['调整图片尺寸','PDF转图片','图片转PDF']},
+        box:{idx:0,arr:['调整图片尺寸','PDF转图片','图片转PDF','PNG转ICO']},
         img_list:'',
         dragIndex: null 
         
@@ -162,7 +167,18 @@ var app = new Vue({
                 });
             };
             img.src = URL.createObjectURL(file);
-           
+        },
+        //png-ico
+        toico(e){
+            let _this = this;
+            const file=e.target.files[0]
+            let formData = new FormData();
+            formData.append('file', file);
+            $.ajax({url:'/toico',type:'post',data:formData,contentType: false,processData: false,success:function(re){
+                // ctl.tips_show(re.msg+'准备下载...');
+                _this.down('output.ico',re.file)
+                e.target.value='';
+            }})
         },
         //下载
         down:function(name,href){

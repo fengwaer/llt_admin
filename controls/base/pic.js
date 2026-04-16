@@ -6,6 +6,7 @@ const path = require('path');
 const pdf = require('pdf-poppler');
 const archiver = require('archiver');
 const convert = require('images-to-pdf');
+const pngToIco = require('png-to-ico').default || require('png-to-ico');
 const sharp=require('sharp');
 sharp.cache(false);
 
@@ -141,7 +142,27 @@ const topdf=async (ctx,next)=>{
     
   }
 }
+//png转换ico
+const toico=async (ctx,next)=>{
+  const file = ctx.request.files.file.filepath;
+  const downpath=path.join('./public/down/output.ico');
+  if(fs.existsSync(downpath)){fs.unlinkSync(downpath);}
+  try {
+    // 1. 转换：传入路径或 Buffer 都可以
+    const buf = await pngToIco(file);
+    // 2. 写入文件
+    fs.writeFileSync(downpath, buf);
+    ctx.body = { 
+      msg: '转换成功！', 
+      file: downpath // 对应生成的固定路径
+    };
+  }catch(err){
+    console.log(err)
+    ctx.status = 500;
+    ctx.body = { msg:err};
+  }
+}
 
 module.exports={
-  get,post,topdf
+  get,post,topdf,toico,
 }
