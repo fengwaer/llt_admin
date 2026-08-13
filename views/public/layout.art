@@ -189,8 +189,9 @@
         },
         // 缓存
         cache_fn(key,data) { 
-            if(data){localStorage.setItem(key, JSON.stringify(data));}
-            else{return JSON.parse(localStorage.getItem(key));}
+          let str=JSON.stringify(data);
+          if(str){localStorage.setItem(key,str);}
+          else{return JSON.parse(localStorage.getItem(key));}
         },
         //查看照片
         show_img(img){

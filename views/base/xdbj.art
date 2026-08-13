@@ -2,14 +2,14 @@
  {{block 'content'}}
  <style>
     .box_1 .in{ margin-right:10px;}
-    .win p{ margin-bottom:10px;}
+    .win .p{ margin-bottom:10px;}
     .bt3{ margin-right:10px;}
     .fn_1{ width:110px;}
     .c3{ text-align:center; font-size: 12px;}
  </style>
 <link href="/public/cs/quill.snow.css" rel="stylesheet">
  <div class="box mdgl" id="app" v-clock>
-    <div class="fn"><i class="bt2" @click="win.data={names:'',date:''},win.is=1">添加</i>
+    <div class="fn"><i class="bt2" @click="win.data={type:'',date:''},win.is=1">添加</i>
         <input v-model='sch.sch' class="in" type="text"  placeholder="输入..." @keyup.enter='sch.page=0;sch.more=1;get()'>
         <i class="bt1 sch" @click='sch.page=0;sch.more=1;get()'>搜索</i> 
         <select class="bt4" @change='get();' v-model="sch.type">
@@ -26,9 +26,14 @@
 
 <div class="win" v-if="win.is">
     <div class="box_1"><i class="close" @click="win.is=false">Ⅹ</i>
-    <div class='box_2'>
-        <p><b>类型：</b><input type="text" class="in" v-model="win.data.type"></p>
-        <div v-if="win.is" ref="editor"></div>
+    <div class='box_2 p_slt'>
+        <div class="p"><b>类型：</b><input type="text" class="in" v-model="win.data.type" @focus="p_slt.is=1" @blur="setTimeout(()=>{p_slt.is=0},150)"></div>
+            <ul class="ul" v-show="p_slt.is">
+                <li v-for='t of type' :value="t.type" v-text="t.type" @click="win.data.type=t.type"></li>
+            </ul>
+            <div v-if="win.is" ref="editor"></div>
+    </div>
+    
         
     </div>
     <p><i class="bt1" @click="add()">提交</i></p>
@@ -49,7 +54,8 @@
 var app = new Vue({
     el: '#app',
     data: {
-        win:{is:0,data:{date:''}},
+        win:{is:0,data:{date:'',type:''}},
+        p_slt:{is:0},
         sch:{num:50,page:0,sch:'',type:'',more:1},
         type:[],
         data:[],
@@ -104,10 +110,6 @@ var app = new Vue({
                 _this.data=res.data[1];
                 _this.type=[{id:-1,type:null},...res.data[0]];
             }})
-        },
-        open_win:function(us){//打开窗口
-            this.win.data = { ...dt };  // 浅拷贝避免污染原数据
-            this.win.data=us;this.win.is=1;
         },
         add:function(){//添加或修改
            // 确保最新内容已同步
