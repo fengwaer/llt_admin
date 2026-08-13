@@ -1,0 +1,44 @@
+{{extend 'public/layout' }}
+ {{block 'content'}}
+ 
+ <style>
+    
+ </style>
+ <div class="box pic">
+    <div id="app">
+        
+    </div>
+</div>
+ <script type="text/javascript">
+
+$(document).ready(e=>{
+    $('.in').keydown(function(e){if(e.keyCode==32){return false}});//禁止输入空格 
+    
+})
+var app = new Vue({
+    el: '#app',
+    data: {
+        win:{is:0,data:{}},
+        url_img:'',
+       
+        
+    },
+    created(){
+        
+    },
+    methods:{
+        get:function(e){
+            $.ajax({url:'/case',data:{get:1,...this.sch},success:function(res){
+                _this.sch.more=1;
+                if(_this.sch.page==0){$('.table').animate({scrollTop:0},400); _this.data=res.data}
+                else{_this.data=_this.data.concat(res.data)}
+                if(res.data.length<50){_this.sch.more=0}
+                _this.sch.page++;
+            }})
+           
+        },
+       
+    }
+})
+</script>
+{{/block}}
