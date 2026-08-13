@@ -64,7 +64,7 @@ table{border-collapse: collapse;  width:100%;
 }
 //通用下拉框
 .p_slt{ position: relative; 
-    .ul{ position: absolute; width:50%; left:148px; background: #fff; box-shadow:0px 0px 5px #666; border-radius:5px; z-index: 10;
+    .ul{ position: absolute; width:50%; left:50px; top:0px; background: #fff; box-shadow:0px 0px 5px #666; border-radius:5px; z-index: 10;
         li{ padding:5px 10px; cursor: pointer;}
         li:hover{ background: #146; color: #fff;}
     }
